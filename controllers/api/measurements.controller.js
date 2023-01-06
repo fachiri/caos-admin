@@ -1,15 +1,5 @@
-// const dirname = `${__dirname}/..`;
-// const { existsSync, writeFile } = require("fs");
-// const xlsx = require("xlsx");
-// const datasetConfig = require(`${__dirname}/../../config/dataset.json`);
-// const datasetPath = `${__dirname}/../config/dataset.json`;`
-// const model = require("../models/index");
-// // const algorithm = require("../helpers/algorithm.helper");
-// // const { splitData } = require("../utils");
-// // const tf = require("@tensorflow/tfjs");
-// // const scikitjs = require("scikitjs");
-// // scikitjs.setBackend(tf);
-// // const anthropometricTable = require(`${dirname}/public/assets/standar-antropometri.json`);
+const model = require("../../models/index");
+const anthropometricTable = require("../../public/assets/standar-antropometri.json");
 
 const readFileDataset = () => {
   const path = __dirname + "/../public/uploads/" + datasetConfig.fileName;
