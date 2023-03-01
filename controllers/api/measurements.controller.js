@@ -1,15 +1,15 @@
-// const dirname = `${__dirname}/..`;
-// const { existsSync, writeFile } = require("fs");
-// const xlsx = require("xlsx");
-// const datasetConfig = require(`${__dirname}/../../config/dataset.json`);
-// const datasetPath = `${__dirname}/../config/dataset.json`;`
+const dirname = `${__dirname}/../..`;
+const { existsSync, writeFile } = require("fs");
+const xlsx = require("xlsx");
+const datasetConfig = require(`${__dirname}/../../config/dataset.json`);
+const datasetPath = `${__dirname}/../config/dataset.json`;
 const model = require("../../models/index");
-// // const algorithm = require("../helpers/algorithm.helper");
-// // const { splitData } = require("../utils");
-// // const tf = require("@tensorflow/tfjs");
-// // const scikitjs = require("scikitjs");
-// // scikitjs.setBackend(tf);
-// // const anthropometricTable = require(`${dirname}/public/assets/standar-antropometri.json`);
+const algorithm = require("../../helpers/algorithm.helper");
+const { splitData } = require("../../utils");
+const tf = require("@tensorflow/tfjs");
+const scikitjs = require("scikitjs");
+scikitjs.setBackend(tf);
+const anthropometricTable = require(`${dirname}/public/assets/standar-antropometri.json`);
 const readFileDataset = () => {
   const path = __dirname + "/../public/uploads/" + datasetConfig.fileName;
   let data = [];
@@ -106,6 +106,15 @@ const getZscore = (type, age, bb, tb, method, jk) => {
   }
 
   const key = `${type}.${jk}.${rangeAge}`;
+
+  if(!anthropometricTable[key]) {
+    return {
+      status: false,
+      code: 400,
+      message: `Terjadi kesalahan, periksa inputan anda!`
+    }
+  }
+
   obj = anthropometricTable[key].find((e) => e[jsonKey] == y);
   dividend = x - obj.Median;
 
@@ -118,8 +127,12 @@ const getZscore = (type, age, bb, tb, method, jk) => {
   quotient = dividend / divisor;
   result = getCategoty(type, quotient);
 
-  return { zs: quotient, status: result, rekom: obj.Median };
+  return { 
+    status: true,
+    data: {zs: quotient, status: result, rekom: obj.Median} 
+  };
 };
+
 const getCategoty = (type, quotient) => {
   let status;
   switch (type) {
@@ -292,4 +305,35 @@ module.exports = {
         });
       });
   },
-};
+  calculator: async (req, res) => {
+    try {
+      console.log(req.query)
+      const { age, bb, tb, jk } = req.query
+      const method = "telentang"
+
+      const bbu = getZscore("BBU", +age, +bb, +tb, method, jk);
+      const tbu = getZscore("TBU", +age, +bb, +tb, method, jk);
+      const bbtb = getZscore("BBTB", +age, +bb, +tb, method, jk);
+
+      if(bbu.status == false) {
+        return res.status(bbu.code).json({
+          status: "Failed",
+          error: bbu.message
+        })
+      }
+
+      res.status(200).json({
+        status: "Success",
+        data: {
+          bbu, tbu, bbtb
+        },
+      });
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({
+        status: "Failed",
+        error
+      });
+    }
+  }
+}
