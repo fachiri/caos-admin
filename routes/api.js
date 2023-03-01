@@ -7,7 +7,8 @@ const {
   posyanduController,
   measurementController,
   growthController,
-  measurementsController
+  measurementsController,
+  toddlersController
 } = require("../controllers/api")
 const { authMiddleware } = require("../middlewares/api")
 
@@ -37,6 +38,7 @@ router.get("/puskesmas/:uuid", puskesmasController.getSpesificPuskesmas);
 
 router.get("/posyandu", posyanduController.getAllPosyandu);
 router.get("/posyandu/:uuid", posyanduController.getSpesificPosyandu);
+router.get("/posyandu/:uuid", posyanduController.getSpesificPosyandu);
 
 // Growth
 router.get("/growth/:uuid", growthController.growthDetail);
@@ -45,17 +47,16 @@ router.get("/growth/:uuid", growthController.growthDetail);
 router.get("/measurement-report", measurementController.measurementReport);
 router.get("/accumulation-report", measurementController.accumulationReport);
 
-// router.get("/posyandu/:uuid", posyanduController.getSpesificPosyandu);
-
-// // toddlers
-// router.get("/toddlers", toddlersController.getAllToddlers);
-// router.get("/toddlers/:uuid", toddlersController.getSpesicificToddler);
-// router.post("/toddlers/", toddlersController.storeToddler);
-// router.put("/toddlers/:uuid", toddlersController.editToddler);
+// toddlers
+router.get("/toddlers", toddlersController.getAllToddlers);
+router.get("/toddlers/:uuid", toddlersController.getSpesicificToddler);
+router.post("/toddlers/", toddlersController.storeToddler);
+router.put("/toddlers/:uuid", toddlersController.editToddler);
 
 // //measurement
 router.get("/measurement", measurementsController.getAllMeasurements);
 router.get("/measurement/:uuid", measurementsController.getDetailMeasurements);
 router.post("/measurement", measurementsController.storeMeasurement);
+router.get("/calculator", measurementsController.calculator);
 
 module.exports = router;
