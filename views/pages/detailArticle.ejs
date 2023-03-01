@@ -1,0 +1,54 @@
+<%- include('../partials/header'); %>
+    <%# include('../partials/sidebar'); %>
+        <% for(user of data) { %>
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+            </header>
+            <div class="page-heading">
+                <h3>Detail Artikel</h3>
+            </div>
+            <section class="section ">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <a href="/getarticle" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left-square me-1"></i>
+                                Daftar Artikel
+                            </a>
+                        </div>
+                    </div>
+            </section>
+            <section>
+                <div class="card">
+                    <div class="card-body overflow-auto">
+                        <h5 class="justify-content-center">Judul : <%= user.title %>
+                        </h5>
+                        <% const uuids=user.uuid;const names=[]; for (let i=0; i < data.length; i++) { if
+                            (uuids.includes(data[i].uuid)) { names.push(data[i].User.name); } } console.log(names); %>
+                            </h5>
+                            <% names.forEach(data=> { %>
+
+                                <h5 class="justify-content-center">Penulis : <%= data %>
+                                </h5>
+                                <% }) %>
+                                    <%- user.body %>
+                                        <div class="mt-4 d-flex justify-content-between">
+                                            <a href="/getarticle" class="btn btn-secondary">
+                                                <i class="bi bi-arrow-left-square me-1"></i>
+                                                Daftar Artikel
+                                            </a>
+                                        </div>
+                    </div>
+
+                </div>
+            </section>
+            <%- include('../partials/footer'); %>
+                <% } %>
+
+                    <style>
+                        body {
+                            margin: 25px;
+                        }
+                    </style>

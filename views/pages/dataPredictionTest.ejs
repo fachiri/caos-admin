@@ -1,0 +1,113 @@
+<%- include('../partials/header'); %> <%- include('../partials/sidebar'); %>
+<div id="main">
+  <header class="mb-3">
+    <a href="#" class="burger-btn d-block d-xl-none">
+      <i class="bi bi-justify fs-3"></i>
+    </a>
+  </header>
+  <div class="page-heading">
+    <h3>Data Prediction Test</h3>
+  </div>
+  <section class="section">
+    <div class="row">
+      <div class="col-6">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h5>Dataset</h5>
+            </div>
+          </div>
+          <div class="card-body">
+            <form action="predicttest" method="post" data-parsley-validate>
+              <div class="form-group">
+                <label for="basicInput">Nama</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="name"
+                  data-parsley-required="true"
+                />
+              </div>
+              <% result.pop(); for(const i of result) { %>
+                <% if(i.value.length < 10) { %>
+                  <div class="form-group">
+                    <label for="<%= i.key.replace(/\W/g, '') %>"><%= i.key %></label>
+                    <select name="<%= i.key.replace(/\W/g, '') %>" id="<%= i.key.replace(/\W/g, '') %>" class="form-control">
+                      <% for(const j of i.value) { %>
+                        <option value="<%= j %>"><%= j %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                <% } else { %>
+                  <div class="form-group">
+                    <label for="<%= i.key.replace(/\W/g, '') %>"><%= i.key %></label>
+                    <input type="number" id="<%= i.key.replace(/\W/g, '') %>" name="<%= i.key.replace(/\W/g, '') %>" class="form-control" data-parsley-required="true" step="0.1">
+                  </div>
+                <% } %>
+              <% } %>
+              <div class="form-group">
+                <label for="test">Berapa Kali Tes</label>
+                <select name="test" id="test" class="form-control">
+                    <% for(let i = 1; i <= 100; i++) { %>
+                      <option value="<%= i %>"><%= i %></option>
+                    <% } %>
+                  </select>
+              </div>
+              <div class="mt-4 d-flex justify-content-between">
+                <a href="/performance" class="btn btn-secondary">
+                  <i class="bi bi-arrow-left-square me-1"></i>
+                  Performance
+                </a>
+                <button type="submit" class="btn btn-primary">
+                  Prediksi
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h5>Tabel Hasil Prediksi</h5>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="table table-striped" id="table1">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nama</th>
+                  <th>Berat Badan</th>
+                  <th>Tinggi Badan</th>
+                  <th>Usia (Bulan)</th>
+                  <th>Akurasi</th>
+                  <th>Indikasi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% for(let i=0; i < data.length; i++) { %>
+                  <tr>
+                    <td><%= i+1 %></td>
+                    <td><%= data[i].name %></td>
+                    <td><%= data[i].berat_badan %></td>
+                    <td><%= data[i].tinggi_badan %></td>
+                    <td><%= data[i].usia %></td>
+                    <td><%= data[i].akurasi %></td>
+                    <td>
+                      <span class="badge bg-light-<%= data[i].label == 1 ? 'danger' : 'success' %>">
+                        <%= data[i].label == 1 ? 'Stunting' : 'Normal' %>
+                      </span>
+                    </td>
+                  </tr>              
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <%- include('../partials/footer'); %>
+</div>
