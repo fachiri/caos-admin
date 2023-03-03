@@ -56,10 +56,11 @@
           </a>
           <ul class="submenu">
             <li class="submenu-item">
-              <a href="<%= baseUrl %>/users">Users</a>
-            </li>
-            <li class="submenu-item">
               <a href="<%= baseUrl %>/toddlers">Balita</a>
+            </li>
+            <% if(role == 'admin') { %>
+            <li class="submenu-item">
+              <a href="<%= baseUrl %>/users">Users</a>
             </li>
             <li class="submenu-item">
               <a href="<%= baseUrl %>/categories">Kategori</a>
@@ -70,11 +71,13 @@
             <li class="submenu-item">
               <a href="<%= baseUrl %>/posyandu">Posyandu</a>
             </li>
+            <% } %>
           </ul>
         </li>
 
         <li class="sidebar-title">Menu</li>
 
+        <% if(role == 'admin') { %>
         <li class="sidebar-item has-sub">
           <a class="sidebar-link">
             <i class="bi bi-clipboard-data-fill"></i>
@@ -95,6 +98,7 @@
             </li>
           </ul>
         </li>
+        <% } %>
 
         <li class="sidebar-item">
           <a href="<%= baseUrl %>/growth" class="sidebar-link">

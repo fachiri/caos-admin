@@ -43,11 +43,11 @@ Run
 ## Todo
 
 - [x] Klasifikasi untuk laporan berdasarkan status gizi
-- [ ] Perbaiki hak akses web portal admin (admin puskes, posyandu, super admin)
+- [x] Perbaiki hak akses web portal admin (admin puskes, posyandu, super admin)
 - [x] Cek pengukuran di bulan yang sama (duplicate row)
-- [ ] Pengisian form "Umur" otomatis berdasarkan tanggal lahir dan tanggal pengukuran
-- [ ] Fix Middleware login semua route
-- [ ] Buat endpoint kalkulator stunting
+- [x] Pengisian form "Umur" otomatis berdasarkan tanggal lahir dan tanggal pengukuran
+- [x] Fix Middleware login semua route
+- [x] Buat endpoint kalkulator stunting
 
 ## Notes
 

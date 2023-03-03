@@ -12,26 +12,18 @@ const {
 } = require("../controllers/api")
 const { authMiddleware } = require("../middlewares/api")
 
-// const growthController = require("../controllers/api/growth.controller.js");
-// const puskesmasController = require("../controllers/api/puskesmas.controller.js");
-// const posyanduController = require("../controllers/api/posyandu.controller.js");
-// const measurementController = require("../controllers/api/measurement.controller.js");
-// const articleController = require("../controllers/api/article.controller.js");
-// const toddlersController = require("../controllers/api/toddlers.controller.js");
-// const measurementsController = require("../controllers/api/measurements.controller.js");
-
-// const authController = require("../controllers/api/auth.controller.js");
-// const authMiddleware = require("../middlewares/api/auth.middleware.js");
-
 // router.post('/user/store', userMiddleware.validateUserStore, userController.userStore)
 
 router.post("/login", authController.login)
 router.post("/register", authMiddleware.validateRegister, authController.register)
 
-router.get('/me', authMiddleware.isLoggedIn, authController.me)
-
 router.get("/article", articleController.getAllArticle);
 router.get("/article/:uuid", articleController.getSpesificArticle);
+router.get("/calculator", measurementsController.calculator);
+
+router.use(authMiddleware.isLoggedIn)
+
+router.get('/me', authController.me)
 
 router.get("/puskesmas", puskesmasController.getAllPuskesmas);
 router.get("/puskesmas/:uuid", puskesmasController.getSpesificPuskesmas);
@@ -57,6 +49,5 @@ router.put("/toddlers/:uuid", toddlersController.editToddler);
 router.get("/measurement", measurementsController.getAllMeasurements);
 router.get("/measurement/:uuid", measurementsController.getDetailMeasurements);
 router.post("/measurement", measurementsController.storeMeasurement);
-router.get("/calculator", measurementsController.calculator);
 
 module.exports = router;
