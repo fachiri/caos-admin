@@ -51,6 +51,7 @@ module.exports = {
                     req.session.loggedin = true;
                     req.session.userid = userData.uuid;
                     req.session.name = userData.name;
+                    req.session.role = userData.role;
                     req.flash('alert', {hex: '#28ab55', color: 'success', status: 'Success'})
                     req.flash('message', 'Welcome to Admin CAOS!')
                     return res.redirect('/')

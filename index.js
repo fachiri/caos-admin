@@ -35,6 +35,7 @@ app.use((req, res, next) => {
     res.locals.message = req.flash("message");
     baseUrl = `${req.protocol}://${req.headers.host}`
     dirName = __dirname
+    res.locals.role = req.session.role;
     next();
 });
 

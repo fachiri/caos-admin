@@ -14,5 +14,23 @@ module.exports = {
             return res.redirect('/');
         }
         next()
-    }
+    },
+    isSuperAdmin: (req, res, next) => {
+        if(req.session.role !== 'admin'){
+            return res.redirect('/');
+        }
+        next()
+    },
+    isAdminPuskesmas: (req, res, next) => {
+        if(req.session.role !== 'admin_puskesmas'){
+            return res.redirect('/');
+        }
+        next()
+    },
+    isAdminPosyandu: (req, res, next) => {
+        if(req.session.role !== 'admin_posyandu'){
+            return res.redirect('/');
+        }
+        next()
+    },
 };
