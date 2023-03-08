@@ -48,6 +48,11 @@ Run
 - [x] Pengisian form "Umur" otomatis berdasarkan tanggal lahir dan tanggal pengukuran
 - [x] Fix Middleware login semua route
 - [x] Buat endpoint kalkulator stunting
+- [ ] Tambah query params di endpoint get article untuk filter kategori
+- [ ] Buat akun orang tua dan profil posyandu (admin posyandu)
+- [ ] Edit profil dan tambah posyandu (admin puskesmas) [note: sekalian di halaman profil puskesmas]
+- [x] Tambah data training setiap kali tambah pengukuran
+
 
 ## Notes
 

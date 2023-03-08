@@ -55,7 +55,7 @@ router.get("/testpredict", [verifyUser.isLogin, verifyUser.isSuperAdmin], adminC
 
 // process
 router.get("/logout", [verifyUser.isLogin], authController.logout);
-router.post("/uploaddataset", [verifyUser.isLogin], multipartMiddleware, uploadController.dataset);
+router.post("/uploaddataset", uploadController.dataset);
 router.post("/processperformance", [verifyUser.isLogin, verifyUser.isSuperAdmin], adminController.processperformance);
 router.post("/processprediction", [verifyUser.isLogin, verifyUser.isSuperAdmin], adminController.processprediction);
 
