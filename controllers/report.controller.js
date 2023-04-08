@@ -44,8 +44,8 @@ module.exports = {
 
       // Create a browser instance
       const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disabled-setupid-sandbox"],
-  });
+        args: ["--no-sandbox", "--disabled-setupid-sandbox"],
+      });
   
       // Create a new page
       const page = await browser.newPage();
@@ -100,8 +100,7 @@ module.exports = {
       
       // Create a browser instance
       const browser = await puppeteer.launch({
-        headless: false,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        args: ["--no-sandbox", "--disabled-setupid-sandbox"],
       });
   
       // Create a new page
