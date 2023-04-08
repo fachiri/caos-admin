@@ -607,7 +607,9 @@ module.exports = {
                 Label: i.predict_result
             })
         }
-        const measure = await model.Measurement.findOne({ where: { id_toddler: id, current_age: age } })
+        const measure = await model.Measurement.findOne({ 
+            where: { ToddlerId: id, current_age: age } 
+        })
         if(measure) {
             req.flash('alert', {hex: '#f3616d', color: 'danger', status: 'Failed'})
             req.flash('message', 'Pengukuran telah dilakukan!')
@@ -635,7 +637,7 @@ module.exports = {
             rekombbtb: bbtb.rekom,
             method, vitamin, lila, lika,
             current_age: age,
-            id_toddler: id,
+            ToddlerId: id,
             predict_result,
             predict_accuracy,
             predict_proba_x,

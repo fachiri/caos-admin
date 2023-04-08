@@ -55,7 +55,7 @@ module.exports = {
         res.redirect("/puskesmas");
       })
       .catch((err) => {
-        console.log(error);
+        console.log(err);
         req.flash("alert", {
           hex: "#f3616d",
           color: "danger",
