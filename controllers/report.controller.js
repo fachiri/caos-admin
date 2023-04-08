@@ -98,7 +98,8 @@ module.exports = {
       
       // Create a browser instance
       const browser = await puppeteer.launch({
-        executablePath: '/usr/bin/chromium-browser'
+        headless: false,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
   
       // Create a new page
