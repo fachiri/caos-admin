@@ -11,7 +11,7 @@ const scikitjs = require("scikitjs");
 scikitjs.setBackend(tf);
 const anthropometricTable = require(`${dirname}/public/assets/standar-antropometri.json`);
 const readFileDataset = () => {
-  const path = __dirname + "/../public/uploads/" + datasetConfig.fileName;
+  const path = __dirname + "/../../public/uploads/" + datasetConfig.fileName;
   let data = [];
   if (existsSync(path)) {
     const workbook = xlsx.readFile(path);
@@ -185,7 +185,11 @@ const getCategoty = (type, quotient) => {
 module.exports = {
   getAllMeasurements: async (req, res) => {
     await model.Measurement.findAll({
-      include: { model: model.Toddler, attributes: ["uuid", "name"] },
+      attributes: [`id`, `uuid`, `date`, `bb`, `tb`, `bbu`, `zbbu`, `rekombbu`, `tbu`, `ztbu`, `rekomtbu`, `bbtb`, `zbbtb`, `rekombbtb`, `lila`, `lika`, `predict_proba_x`, `predict_proba_y`, `predict_result`, `predict_accuracy`, `method`, `vitamin`, `current_age`, `editable`, `ToddlerId`, `createdAt`, `updatedAt`],
+      include: { 
+        model: model.Toddler, 
+        attributes: ["uuid", "name"]
+      },
     })
       .then((result) => {
         res.status(200).json({
@@ -233,64 +237,71 @@ module.exports = {
       });
   },
   storeMeasurement: async (req, res) => {
-    const { uuid, date, age, bb, tb, method, vitamin } = req.body;
-    const toddler = await model.Toddler.findOne({ where: { uuid: uuid } });
-    console.log(uuid);
-    if (!toddler) {
-      // objek bernilai null, jadi keluar dari fungsi
-      return res.status(400).json({
-        status: "Failed",
-        message: "Anak tidak ditemukan",
-      });
-    }
-    const { id, jk } = toddler;
+    const { uuid, date, age, bb, tb, method, vitamin, lila, lika } = req.body
+        const { id, jk } = await model.Toddler.findOne({ where: { uuid: uuid } })
+        let fileDataset = readFileDataset()
 
-    if (
-      (age < 24 && method === "berdiri") ||
-      (age > 24 && method === "telentang")
-    ) {
-      return res.status(400).json({
-        status: "Failed",
-        message: "Terjadi kesalahan dalam pengukuran!",
-      });
-    }
-    const bbu = getZscore("BBU", +age, +bb, +tb, method, jk);
-    const tbu = getZscore("TBU", +age, +bb, +tb, method, jk);
-    const bbtb = getZscore("BBTB", +age, +bb, +tb, method, jk);
-    const {
-      predict_result,
-      predict_accuracy,
-      predict_proba_x,
-      predict_proba_y,
-    } = await algorithm.prediction(
-      +bb,
-      +tb,
-      +age,
-      jk == "L" ? 1 : 0,
-      splitData(readFileDataset())
-    );
-    await model.Measurement.create({
-      date,
-      bb,
-      tb,
-      bbu: bbu.status,
-      tbu: tbu.status,
-      bbtb: bbtb.status,
-      zbbu: bbu.zs,
-      ztbu: tbu.zs,
-      zbbtb: bbtb.zs,
-      rekombbu: bbu.rekom,
-      rekomtbu: tbu.rekom,
-      rekombbtb: bbtb.rekom,
-      method,
-      vitamin,
-      current_age: age,
-      id_toddler: id,
-      predict_result,
-      predict_accuracy,
-      predict_proba_x,
-      predict_proba_y,
-    })
+        // add row to dataset
+        const allMeasure = await model.Measurement.findAll({
+            attributes: ['bb', 'tb', 'current_age', 'predict_result'],
+            include: [{
+                model: model.Toddler,
+                attributes: ['jk'],
+            }]
+        })
+        for (const i of allMeasure) {
+            let jk2
+            if (i.Toddler.jk == 'L') {
+                jk2 = 1
+            } else {
+                jk2 = 0
+            }
+            fileDataset.push({
+                Usia: i.current_age,
+                Berat: i.bb,
+                Tinggi: i.tb,
+                JK: jk2,
+                Label: i.predict_result
+            })
+        }
+        const measure = await model.Measurement.findOne({ 
+            where: { ToddlerId: id, current_age: age } 
+        })
+        if(measure) {
+          return res.status(400).json({
+            status: "Failed",
+            message: 'Pengukuran telah dilakukan!'
+          });
+        }
+        if ((age < 24 && method === 'berdiri') || (age > 24 && method === 'telentang')) {
+          return res.status(400).json({
+            status: "Failed",
+            message: 'Terjadi kesalahan dalam pengukuran!'
+          });
+        }
+        const bbu = getZscore('BBU', +age, +bb, +tb, method, jk)
+        const tbu = getZscore('TBU', +age, +bb, +tb, method, jk)
+        const bbtb = getZscore('BBTB', +age, +bb, +tb, method, jk)
+        const { predict_result, predict_accuracy, predict_proba_x, predict_proba_y } = await algorithm.prediction(+bb, +tb, +age, jk == 'L' ? 1 : 0, splitData(fileDataset))
+        await model.Measurement.create({
+            date, bb, tb,
+            bbu: bbu.status,
+            tbu: tbu.status,
+            bbtb: bbtb.status,
+            zbbu: bbu.zs,
+            ztbu: tbu.zs,
+            zbbtb: bbtb.zs,
+            rekombbu: bbu.rekom,
+            rekomtbu: tbu.rekom,
+            rekombbtb: bbtb.rekom,
+            method, vitamin, lila, lika,
+            current_age: age,
+            ToddlerId: id,
+            predict_result,
+            predict_accuracy,
+            predict_proba_x,
+            predict_proba_y
+        })
       .then(() => {
         res.status(201).json({
           status: "Success",

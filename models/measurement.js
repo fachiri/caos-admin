@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Measurement.belongsTo(models.Toddler, {
-        foreignKey: 'id_toddler'
+        foreignKey: 'ToddlerId'
       })
     }
   }
@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.CHAR,
       defaultValue: 'y',
     },
-    id_toddler: DataTypes.INTEGER
+    ToddlerId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Measurement',

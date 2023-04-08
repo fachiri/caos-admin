@@ -78,7 +78,7 @@ module.exports = {
       editable: {
         type: Sequelize.CHAR(1)
       },
-      id_toddler: {
+      ToddlerId: {
         type: Sequelize.INTEGER
       },
       createdAt: {
