@@ -582,6 +582,31 @@ module.exports = {
     storeMeasurement: async (req, res) => {
         const { uuid, date, age, bb, tb, method, vitamin, lila, lika } = req.body
         const { id, jk } = await model.Toddler.findOne({ where: { uuid: uuid } })
+        let fileDataset = readFileDataset()
+
+        // add row to dataset
+        const allMeasure = await model.Measurement.findAll({
+            attributes: ['bb', 'tb', 'current_age', 'predict_result'],
+            include: [{
+                model: model.Toddler,
+                attributes: ['jk'],
+            }]
+        })
+        for (const i of allMeasure) {
+            let jk2
+            if (i.Toddler.jk == 'L') {
+                jk2 = 1
+            } else {
+                jk2 = 0
+            }
+            fileDataset.push({
+                Usia: i.current_age,
+                Berat: i.bb,
+                Tinggi: i.tb,
+                JK: jk2,
+                Label: i.predict_result
+            })
+        }
         const measure = await model.Measurement.findOne({ where: { id_toddler: id, current_age: age } })
         if(measure) {
             req.flash('alert', {hex: '#f3616d', color: 'danger', status: 'Failed'})
@@ -596,7 +621,7 @@ module.exports = {
         const bbu = getZscore('BBU', +age, +bb, +tb, method, jk)
         const tbu = getZscore('TBU', +age, +bb, +tb, method, jk)
         const bbtb = getZscore('BBTB', +age, +bb, +tb, method, jk)
-        const { predict_result, predict_accuracy, predict_proba_x, predict_proba_y } = await algorithm.prediction(+bb, +tb, +age, jk == 'L' ? 1 : 0, splitData(readFileDataset()))
+        const { predict_result, predict_accuracy, predict_proba_x, predict_proba_y } = await algorithm.prediction(+bb, +tb, +age, jk == 'L' ? 1 : 0, splitData(fileDataset))
         await model.Measurement.create({
             date, bb, tb,
             bbu: bbu.status,

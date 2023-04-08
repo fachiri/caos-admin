@@ -3,15 +3,29 @@ const model = require("../models/index");
 module.exports = {
   getPosyandu: async (req, res) => {
     const data = await model.Posyandus.findAll({
-      attributes: ["uuid", "nama", "alamat"],
+      attributes: ["id", "uuid", "nama", "alamat"],
+      include: [{
+        model: model.User,
+        attributes: ['name']
+      }]
     });
     const puskesmas = await model.Puskesmas.findAll({
       attributes: ["uuid", "nama"],
     });
-    res.render("./pages/posyandu", { data, puskesmas });
+    const users = await model.User.findAll({
+      attributes: ["id", "name", "posyanduId"],
+      where: {
+        role: "admin_posyandu"
+      },
+      include: [{
+        model: model.Posyandus,
+        attributes: ['nama']
+      }]
+    })
+    res.render("./pages/posyandu", { data, puskesmas, users });
   },
   storePosyandu: async (req, res) => {
-    const { nama, alamat, id_puskesmas } = req.body;
+    const { nama, alamat, id_puskesmas, id_user } = req.body;
     let idPuskes;
     await model.Puskesmas.findOne({
       where: {
@@ -36,7 +50,15 @@ module.exports = {
       alamat,
       puskesmaId: idPuskes,
     })
-      .then(() => {
+      .then(async (result) => {
+        const posyanduId = result.id
+        await model.User.update({
+          posyanduId
+        }, {
+          where: {
+            id: id_user
+          }
+        })
         req.flash("alert", {
           hex: "#28ab55",
           color: "success",
@@ -59,7 +81,11 @@ module.exports = {
       });
   },
   updatePosyandu: async (req, res) => {
-    let { nama, alamat } = req.body;
+    let { nama, alamat, id_user } = req.body;
+    let redirectUri = "/posyandu"
+    if (req.query.from && req.query.from == "profile") {
+      redirectUri = "/profile"
+    }
     const response = await model.Posyandus.findOne({
       where: {
         uuid: req.params.uuid,
@@ -71,7 +97,7 @@ module.exports = {
         color: "danger",
         status: "User tidak ditemukan",
       });
-      res.redirect("/posyandu");
+      res.redirect(redirectUri);
     }
 
     if (!nama) {
@@ -92,8 +118,16 @@ module.exports = {
         },
       }
     )
-      .then((result) => {
-        console.log("then");
+      .then( async(result) => {
+        if(id_user) {
+          await model.User.update({
+            posyanduId: response.id
+          }, {
+            where: {
+              id: id_user
+            }
+          })
+        }
         req.flash("alert", {
           hex: "#28ab55",
           color: "success",
@@ -104,7 +138,7 @@ module.exports = {
           `Berhasil Update Posyandu dengan nama ${response.nama}`
         );
         res.status(201);
-        res.redirect("/posyandu");
+        res.redirect(redirectUri);
       })
       .catch((result) => {
         req.flash("alert", {
@@ -112,7 +146,7 @@ module.exports = {
           color: "danger",
           status: "Gagal Update Posyandu baru",
         });
-        res.redirect("/posyandu");
+        res.redirect(redirectUri);
       });
   },
   deletePosyandu: async (req, res) => {
@@ -121,13 +155,17 @@ module.exports = {
         uuid: req.params.uuid,
       },
     });
+    let redirectUri = "/posyandu"
+    if (req.query.from && req.query.from == "profile") {
+      redirectUri = "/profile"
+    }
     if (!response) {
       req.flash("alert", {
         hex: "#f3616d",
         color: "danger",
-        status: "Kategori tidak ditemukan",
+        status: "Posyandu tidak ditemukan",
       });
-      res.redirect("/categories");
+      res.redirect(redirectUri);
     }
     await model.Posyandus.destroy({
       where: {
@@ -145,7 +183,7 @@ module.exports = {
           `Berhasil Hapus Posyandu dengan nama ${response.nama}`
         );
         res.status(200);
-        res.redirect("/posyandu");
+        res.redirect(redirectUri);
       })
       .catch((result) => {
         req.flash("alert", {
@@ -153,7 +191,7 @@ module.exports = {
           color: "danger",
           status: "Gagal Hapus Posyandu",
         });
-        res.redirect("/posyandu");
+        res.redirect(redirectUri);
       });
   },
 };

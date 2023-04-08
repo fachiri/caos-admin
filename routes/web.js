@@ -8,7 +8,8 @@ const {
   articleController,
   puskesmasController,
   posyanduController,
-  reportController 
+  reportController,
+  profileController
 } = require("../controllers");
 const verifyUser = require("../middlewares/verify");
 const masterMiddleware = require("../middlewares/master.middleware.js");
@@ -25,16 +26,13 @@ router.post("/auth/register", authController.register);
 // --general
 router.get('/', [verifyUser.isLogin], adminController.dashboard)
 
-// ---master
-router.get("/users", [verifyUser.isLogin, verifyUser.isSuperAdmin], masterController.users);
+
+// toddler
 router.get("/toddlers", [verifyUser.isLogin], masterController.toddlers);
 router.get("/toddler/edit/:uuid", [verifyUser.isLogin], masterController.editToddlerPage);
 router.post("/toddler/edit/:uuid", [verifyUser.isLogin, masterMiddleware.getProvKabKec], masterController.editToddler);
 router.get("/toddlers/delete/:uuid", [verifyUser.isLogin], masterController.deleteToddlerPage);
 router.post("/toddler/store", [verifyUser.isLogin, masterMiddleware.getProvKabKec], masterController.storeToddler);
-router.get("/categories", [verifyUser.isLogin, verifyUser.isSuperAdmin], masterController.categories);
-router.get("/puskesmas", [verifyUser.isLogin, verifyUser.isSuperAdmin], puskesmasController.getPuskesmas);
-router.get("/posyandu", [verifyUser.isLogin, verifyUser.isSuperAdmin], posyanduController.getPosyandu);
 
 router.get('/growth', [verifyUser.isLogin], adminController.growth)
 router.get('/growth/:uuid', [verifyUser.isLogin], adminController.growthDetail)
@@ -55,7 +53,7 @@ router.get("/testpredict", [verifyUser.isLogin, verifyUser.isSuperAdmin], adminC
 
 // process
 router.get("/logout", [verifyUser.isLogin], authController.logout);
-router.post("/uploaddataset", [verifyUser.isLogin], multipartMiddleware, uploadController.dataset);
+router.post("/uploaddataset", uploadController.dataset);
 router.post("/processperformance", [verifyUser.isLogin, verifyUser.isSuperAdmin], adminController.processperformance);
 router.post("/processprediction", [verifyUser.isLogin, verifyUser.isSuperAdmin], adminController.processprediction);
 
@@ -63,23 +61,63 @@ router.post("/training", [verifyUser.isLogin], adminController.training);
 router.post("/predict", [verifyUser.isLogin], adminController.predict);
 router.post("/predicttest", [verifyUser.isLogin], adminController.predicttest);
 
+router.get("/categories", [verifyUser.isLogin, verifyUser.isSuperAdmin], masterController.categories);
 router.post("/category/store", [verifyUser.isLogin], masterController.storecategory);
 router.post("/categories/update/:uuid", [verifyUser.isLogin], masterController.updateCategory);
 router.get("/categories/delete/:uuid", [verifyUser.isLogin], masterController.deleteCategory);
 
+router.get("/users", [verifyUser.isLogin, verifyUser.isSuperAdmin], masterController.users);
 router.post("/users/store", [verifyUser.isLogin], masterController.storeUsers);
 router.post("/users/update/:uuid", [verifyUser.isLogin], masterController.updateUser);
 router.get("/users/editstatus/:uuid", [verifyUser.isLogin], masterController.editStatusUser);
 router.get("/users/delete/:uuid", [verifyUser.isLogin], masterController.deleteUser);
 
-router.post("/puskesmas/store", [verifyUser.isLogin], puskesmasController.storePuskesmas);
-router.post("/puskesmas/:id", [verifyUser.isLogin], puskesmasController.getPuskesmasById);
-router.post("/puskesmas/update/:uuid", [verifyUser.isLogin], puskesmasController.updatePuskesmas);
-router.get("/puskesmas/delete/:uuid", [verifyUser.isLogin], puskesmasController.deletePuskesmas);
+router.get(
+  "/puskesmas",
+  [verifyUser.isLogin, verifyUser.isSuperAdmin], 
+  puskesmasController.getPuskesmas
+)
+router.post(
+  "/puskesmas/store", 
+  [verifyUser.isLogin, verifyUser.isSuperAdmin], 
+  puskesmasController.storePuskesmas
+);
+router.post(
+  "/puskesmas/:id", 
+  [verifyUser.isLogin, verifyUser.isSuperAdmin], 
+  puskesmasController.getPuskesmasById
+);
+router.post(
+  "/puskesmas/update/:uuid", 
+  [verifyUser.isLogin], 
+  puskesmasController.updatePuskesmas
+);
+router.get(
+  "/puskesmas/delete/:uuid", 
+  [verifyUser.isLogin, verifyUser.isSuperAdmin], 
+  puskesmasController.deletePuskesmas
+);
 
-router.post("/posyandu/store", [verifyUser.isLogin], posyanduController.storePosyandu);
-router.post("/posyandu/update/:uuid", [verifyUser.isLogin], posyanduController.updatePosyandu);
-router.get("/posyandu/delete/:uuid", [verifyUser.isLogin], posyanduController.deletePosyandu);
+router.get(
+  "/posyandu", 
+  [verifyUser.isLogin, verifyUser.isSuperAdmin], 
+  posyanduController.getPosyandu
+);
+router.post(
+  "/posyandu/store", 
+  [verifyUser.isLogin, verifyUser.isSuperAdmin], 
+  posyanduController.storePosyandu
+);
+router.post(
+  "/posyandu/update/:uuid", 
+  [verifyUser.isLogin], 
+  posyanduController.updatePosyandu
+);
+router.get(
+  "/posyandu/delete/:uuid", 
+  [verifyUser.isLogin], 
+  posyanduController.deletePosyandu
+);
 
 router.post("/insertarticle", [verifyUser.isLogin, userMiddleware.validateImages], articleController.insertarticle);
 router.get("/getarticle/delete/:uuid", [verifyUser.isLogin], articleController.deleteArticle);
@@ -91,5 +129,26 @@ router.post("/editarticle/:slug", [verifyUser.isLogin], articleController.editAr
 
 router.get("/report/measurement/:year", [verifyUser.isLogin], reportController.measurement);
 router.get("/report/accumulation/:month/:year", [verifyUser.isLogin], reportController.accumulation);
+
+router.get("/profile",
+  [verifyUser.isLogin],
+  profileController.page
+)
+router.post("/profile/storePosyandu",
+  [verifyUser.isLogin],
+  profileController.storePosyandu
+)
+
+router.get(
+  "/parents",
+  [verifyUser.isLogin],
+  masterController.parentsPage
+)
+
+router.post(
+  "/parents/add",
+  [verifyUser.isLogin],
+  masterController.parentsAdd
+)
 
 module.exports = router;

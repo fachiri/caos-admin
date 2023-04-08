@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 const PORT = process.env.PORT || 3000;
 const HOSTIP = process.env.HOSTIP || 'localhost';
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
 app.use(fileUpload());
 app.use(express.static(__dirname + "/public"));
@@ -53,5 +54,5 @@ app.use((req, res, next) => {
 });
 
 app.listen(PORT, () =>
-  console.log(`Server running on http://${HOSTIP}:${PORT}`)
+  console.log(`Server running on http://${HOSTIP}:${PORT} (${NODE_ENV})`)
 );

@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       Posyandu.belongsTo(models.Puskesmas, {
         foreignKey: "puskesmaId",
       });
+      Posyandu.hasMany(models.User);
     }
   }
   Posyandu.init(

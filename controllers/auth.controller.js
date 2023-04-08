@@ -43,6 +43,10 @@ module.exports = {
             req.flash('alert', {hex: '#f3616d', color: 'danger', status: 'Failed'})
             req.flash('message', 'Your email or password is incorrect!')
             res.redirect('/login')
+        } else if (userData.role == 'masyarakat') {
+            req.flash('alert', {hex: '#f3616d', color: 'danger', status: 'Failed'})
+            req.flash('message', 'Your email or password is incorrect!')
+            res.redirect('/login')
         } else {
             // cek password
             bcrypt.compare(req.body.password, userData.password, async (err, result) => {
@@ -52,6 +56,8 @@ module.exports = {
                     req.session.userid = userData.uuid;
                     req.session.name = userData.name;
                     req.session.role = userData.role;
+                    req.session.puskesmaId = userData.puskesmaId;
+                    req.session.posyanduId = userData.posyanduId;
                     req.flash('alert', {hex: '#28ab55', color: 'success', status: 'Success'})
                     req.flash('message', 'Welcome to Admin CAOS!')
                     return res.redirect('/')

@@ -1,0 +1,270 @@
+<%- include('../partials/header'); %>
+<%- include('../partials/sidebar'); %>
+<div id="main">
+  <header class="mb-3">
+      <a href="#" class="burger-btn d-block d-xl-none">
+          <i class="bi bi-justify fs-3"></i>
+      </a>
+  </header>
+  <div class="page-heading d-flex justify-content-between">
+    <h3>Profil</h3>
+    <div class="d-block">
+      <button class="btnCard btn btn-primary border mx-1 disabled" type="button" data-bs-toggle="collapse" data-bs-target="#personalCard" data-bs-parent="#measurementGroup">Personal</button>
+      <% if(role != 'admin' && instansi) { %>
+        <button class="btnCard btn btn-light border mx-1" type="button" data-bs-toggle="collapse" data-bs-target="#instansiCard" data-bs-parent="#measurementGroup">
+          <% if(role == 'admin_puskesmas') { %>
+            Puskesmas
+          <% } %>
+          <% if(role == 'admin_posyandu') { %>
+            Posyandu
+          <% } %>
+        </button>
+      <% } %>
+      <% if(role == 'admin_puskesmas') { %>
+        <button class="btnCard btn btn-light border mx-1" type="button" data-bs-toggle="collapse" data-bs-target="#posyanduCard" data-bs-parent="#measurementGroup">Posyandu</button>
+      <% } %>
+    </div>
+  </div>
+  <section id="measurementGroup" class="section mt-xxl-0 mt-4">
+    <div class="card">
+      <div id="personalCard" class="card collapse show">
+        <div class="card-header">
+          <h5>Personal</h5>
+        </div>
+        <div class="card-body">
+          <form action="users/update/<%= user.uuid %>?from=profile" method="post" data-parsley-validate>
+            <div class="mb-3">
+              <label class="form-label">Nama</label>
+              <input type="text" class="form-control" name="name" data-parsley-required="true" value="<%= user.name %>">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" name="email" data-parsley-required="true" value="<%= user.email %>">
+            </div>
+            <button type="submit" class="btn btn-primary ml-1">
+              <i class="bx bx-check d-block d-sm-none"></i>
+              <span class="d-none d-sm-block">Perbarui</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <% if(role != 'admin' && instansi) { %>
+      <div class="card">
+        <div id="instansiCard" class="card collapse">
+          <div class="card-header">
+            <h5>
+              <% if(role == 'admin_puskesmas') { %>
+                Puskesmas
+              <% } %>
+              <% if(role == 'admin_posyandu') { %>
+                Posyandu
+              <% } %>
+            </h5>
+          </div>
+          <div class="card-body">
+            <form action="<%= role == 'admin_puskesmas' ? 'puskesmas' : 'posyandu' %>/update/<%= instansi.uuid %>?from=profile" method="post" data-parsley-validate>
+              <div class="mb-3">
+                <label class="form-label">Nama</label>
+                <input type="text" class="form-control" name="nama" data-parsley-required="true" value="<%= instansi.nama %>">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Alamat</label>
+                <input type="text" class="form-control" name="alamat" data-parsley-required="true" value="<%= instansi.alamat %>">
+              </div>
+              <button type="submit" class="btn btn-primary ml-1">
+                <i class="bx bx-check d-block d-sm-none"></i>
+                <span class="d-none d-sm-block">Perbarui</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <% if(role == 'admin_puskesmas') { %>
+        <div class="card">
+          <div id="posyanduCard" class="card collapse">
+            <div class="card-header d-flex justify-content-between">
+              <h5>Daftar Posyandu di Puskesmas <%= instansi.nama %></h5>
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">Tambah</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped" id="table1">
+                <thead>
+                  <tr>
+                    <th>Nama</th>
+                    <th>Alamat</th>
+                    <th>Admin</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% posyandu.forEach((data)=> {%>
+                    <tr>
+                      <td>
+                        <%= data.nama %>
+                      </td>
+                      <td>
+                        <%= data.alamat %>
+                      </td>
+                      <td>
+                        <% if(data.Users.length > 0) { %>
+                          <% data.Users.forEach((users)=> { %>
+                            <p> <%= users.name %> </p>
+                          <% }) %>
+                        <% } else { %>
+                          <p class="text-warning">Admin tidak ditemukan</p> 
+                        <% } %>
+                      </td>
+                      <td>
+                        <button class="btn icon btn-success" data-bs-toggle="modal" data-bs-target="#editPosyanduModal<%= data.uuid %>">
+                          <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn icon btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModalPosyandu<%= data.uuid %> ">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- modal tambah posyandu -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">
+                  Tambah Posyandu
+                </h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                  <i data-feather="x"></i>
+                </button>
+              </div>
+              <form action="profile/storePosyandu" method="post" data-parsley-validate>
+                <div class="modal-body">
+                  <h6>Data Posyandu</h6>
+                  <div class="mb-3">
+                    <label class="form-label">Nama</label>
+                    <input type="text" class="form-control" name="nama" data-parsley-required="true">
+                  </div>
+                  <input type="hidden" name="puskesmaId" value="<%= instansi.id %>">
+                  <div class="mb-3">
+                    <label class="form-label">Alamat</label>
+                    <input type="text" class="form-control" name="alamat" data-parsley-required="true">
+                  </div>
+                  <h6>Data Admin</h6>
+                  <div class="mb-3">
+                    <label class="form-label">Nama</label>
+                    <input type="text" class="form-control" name="nama_admin" data-parsley-required="true">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="text" class="form-control" name="email_admin" data-parsley-required="true">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" name="password_admin" placeholder="Default (12345678)">
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+                    <i class="bx bx-x d-block d-sm-none"></i>
+                    <span class="d-none d-sm-block">Close</span>
+                  </button>
+                  <button type="submit" class="btn btn-primary ml-1">
+                    <i class="bx bx-check d-block d-sm-none"></i>
+                    <span class="d-none d-sm-block">Accept</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- modal edit posyandu -->
+        <% for(data of posyandu) { %>
+          <div class="modal fade" id="editPosyanduModal<%= data.uuid %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalCenterTitle">
+                    Edit Posyandu
+                  </h5>
+                  <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <i data-feather="x"></i>
+                  </button>
+                </div>
+                <form action="/posyandu/update/<%= data.uuid %>?from=profile" method="post" data-parsley-validate>
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label class="form-label">Nama Posyandu</label>
+                      <input type="text" class="form-control" name="nama" value="<%= data.nama %>">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Alamat</label>
+                      <input type="text" class="form-control" name="alamat" value="<%= data.alamat %>">
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+                      <i class="bx bx-x d-block d-sm-none"></i>
+                      <span class="d-none d-sm-block">Close</span>
+                    </button>
+                    <button type="submit" class="btn btn-primary ml-1">
+                      <i class="bx bx-check d-block d-sm-none"></i>
+                      <span class="d-none d-sm-block">Accept</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        <% } %>
+        <!-- modal hapus posyandu -->
+        <% for(data of posyandu) { %>
+          <div class="modal fade" id="deleteModalPosyandu<%= data.uuid %>" tabindex=" -1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalCenterTitle">
+                    Hapus Posyandu
+                  </h5>
+                  <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <i data-feather="x"></i>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <p>Apakah Anda Yakin Menghapus Posyandu Ini?</p>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+                    <i class="bx bx-x d-block d-sm-none"></i>
+                    <span class="d-none d-sm-block">Close</span>
+                  </button>
+                  <button type="submit" class="btn btn-primary ml-1">
+                    <i class="bx bx-check d-block d-sm-none"></i>
+                    <a href="/posyandu/delete/<%= data.uuid %>?from=profile" class="d-none d-sm-block text-white">Accept</a>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      <% } %>
+    <% } %>
+  </section>
+  <%- include('../partials/footer'); %>
+  <script>
+    $('.btnCard').on('click', (e) => {
+    $('.collapse').collapse('hide');
+    $(e.target)
+      .addClass('btn-primary disabled')
+      .removeClass('btn-light')
+      .siblings('.btnCard')
+      .removeClass('btn-primary disabled')
+    })
+  </script>
+</div>

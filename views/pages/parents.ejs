@@ -1,0 +1,143 @@
+<%- include('../partials/header'); %> <%- include('../partials/sidebar'); %>
+<div id="main">
+  <header class="mb-3">
+    <a href="#" class="burger-btn d-block d-xl-none">
+      <i class="bi bi-justify fs-3"></i>
+    </a>
+  </header>
+  <div class="page-heading d-flex justify-content-between">
+    <h3>Pengukuran</h3>
+    <div class="d-block">
+      <button class="btnCard btn btn-primary border mx-1 disabled" type="button" data-bs-toggle="collapse" data-bs-target="#tableCard" data-bs-parent="#measurementGroup">Daftar Akun</button>
+      <button class="btnCard btn btn-light border mx-1" type="button" data-bs-toggle="collapse" data-bs-target="#formCard" data-bs-parent="#measurementGroup">Tambah Akun</button>
+    </div>
+  </div>
+  <section id="measurementGroup" class="section mt-xxl-0 mt-4">
+    <div class="card">
+      <div id="tableCard" class="card collapse show">
+        <div class="card-header">
+          <h5>Daftar Akun Orang Tua</h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped" id="table1">
+            <thead>
+              <tr>
+                <th>No. KK</th>
+                <th>NIK</th>
+                <th>Nama</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% parents.forEach(e => { %>
+              <tr>
+                <td><%= e.Parent.no_kk %></td>
+                <td><%= e.Parent.nik %></td>
+                <td><%= e.name %></td>
+                <td><%= e.email %></td>
+                <td><%= e.status %></td>
+                <td>
+                  <% if (e.status==="active" ) { %>
+                    <button class="btn icon btn-warning" data-bs-toggle="modal" data-bs-target="#editStatusModalCenter<%= e.uuid %>">
+                      <i class="bi bi-person-dash"></i>
+                    </button>
+                  <% }else{%>
+                    <button class="btn icon btn-primary" data-bs-toggle="modal" data-bs-target="#editStatusModalCenter<%= e.uuid %>">
+                      <i class="bi bi-person-dash"></i>
+                    </button>
+                  <%} %>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div id="formCard" class="card collapse">
+          <div class="card-header">
+            <h5>Tambah Akun</h5>
+          </div>
+          <div class="card-body">
+            <form action="parents/add" method="post" data-parsley-validate>
+              <div class="mb-3">
+                <label class="form-label">Nomor Kartu Keluarga</label>
+                <input type="text" class="form-control" name="no_kk" data-parsley-required="true">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">NIK</label>
+                <input type="text" class="form-control" name="nik" data-parsley-required="true">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nama</label>
+                <input type="text" class="form-control" name="name" data-parsley-required="true">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" data-parsley-required="true">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" placeholder="Default (12345678)">
+              </div>
+              <button type="submit" class="btn btn-primary ml-1">
+                <i class="bx bx-check d-block d-sm-none"></i>
+                <span class="d-none d-sm-block">Submit</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <% for(user of parents) { %>
+    <div class="modal fade" id="editStatusModalCenter<%= user.uuid %>" tabindex=" -1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+        role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalCenterTitle">
+              Edit Status Users
+            </h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <i data-feather="x"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <% if (user.status==="active" ) { %>
+                <p>Apakah Anda Yakin Menonaktifkan User ini Ini?</p>
+                <% }else{%>
+                  <p>Apakah Anda Yakin Mengaktifkan User Ini?</p>
+
+                  <%}%>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+              <i class="bx bx-x d-block d-sm-none"></i>
+              <span class="d-none d-sm-block">Close</span>
+            </button>
+            <button type="submit" class="btn btn-primary ml-1">
+              <i class="bx bx-check d-block d-sm-none"></i>
+              <a href="/users/editstatus/<%= user.uuid %>?from=parents" class="d-none d-sm-block text-white">Accept</a>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+  <%- include('../partials/footer'); %>
+  <script>
+    $('.btnCard').on('click', (e) => {
+    $('.collapse').collapse('hide');
+    $(e.target)
+      .addClass('btn-primary disabled')
+      .removeClass('btn-light')
+      .siblings('.btnCard')
+      .removeClass('btn-primary disabled')
+    })
+  </script>
+</div>
