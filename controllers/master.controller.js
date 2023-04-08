@@ -1,6 +1,8 @@
 const model = require("../models/index");
 const apiConfig = require(`${__dirname}/../config/api.json`);
 const bcrypt = require("bcryptjs");
+const Sequelize = require('sequelize'); 
+const op = Sequelize.Op;
 module.exports = {
   users: async (req, res) => {
     const data = await model.User.findAll({
@@ -9,10 +11,9 @@ module.exports = {
     res.render("./pages/users", { data });
   },
   storeUsers: async (req, res) => {
-    console.log("wleo");
     let { name, email, role, password } = req.body;
 
-    if (password === null) password = /(\w+)@/g.exec(email)[1];
+    if (password == '') password = '12345678';
 
     bcrypt.hash(password, 10, async (err, hash) => {
       if (err) {
@@ -23,7 +24,6 @@ module.exports = {
         });
       }
 
-      console.log("asdhaoidhawoidhawiodhawoidhawoidhaohd");
       await model.User.create({
         name: name,
         email: email,
@@ -332,6 +332,11 @@ module.exports = {
   },
   updateUser: async (req, res) => {
     let { name, email, role, password } = req.body;
+    let redirectUri = "/users"
+    if (req.query.from && req.query.from == "profile") {
+      redirectUri = "/profile"
+      password = ''
+    }
     const response = await model.User.findOne({
       where: {
         uuid: req.params.uuid,
@@ -343,7 +348,7 @@ module.exports = {
         color: "danger",
         status: "User tidak ditemukan",
       });
-      res.redirect("/users");
+      res.redirect(redirectUri);
     }
 
     if (!name) name = response.name;
@@ -354,6 +359,7 @@ module.exports = {
 
     bcrypt.hash(password, 10, async (err, hash) => {
       if (err) {
+        console.log(err)
         return req.flash("alert", {
           hex: "#f3616d",
           color: "danger",
@@ -391,15 +397,16 @@ module.exports = {
             `Berhasil Update User dengan nama ${response.name}`
           );
           res.status(201);
-          res.redirect("/users");
+          res.redirect(redirectUri);
         })
-        .catch((result) => {
+        .catch((error) => {
+          console.log(error)
           req.flash("alert", {
             hex: "#f3616d",
             color: "danger",
             status: "Gagal Update users baru",
           });
-          res.redirect("/users");
+          res.redirect(redirectUri);
         });
     });
   },
@@ -573,6 +580,10 @@ module.exports = {
   editStatusUser: async (req, res) => {
     let statusUpdate;
     let dump;
+    let redirectUri = "/users"
+    if (req.query.from && req.query.from == "parents") {
+      redirectUri = "/parents"
+    }
     const data = await model.User.findOne({
       where: {
         uuid: req.params.uuid,
@@ -601,7 +612,7 @@ module.exports = {
           status: "Success",
         });
         req.flash("message", `Berhasil ${dump} akun dengan nama ${data.name}`);
-        res.status(200).redirect("/users");
+        res.status(200).redirect(redirectUri);
       })
       .catch((result) => {
         req.flash("alert", {
@@ -613,7 +624,91 @@ module.exports = {
           "message",
           `Gagal gagal ${dump} akun dengan nama ${data.name}`
         );
-        res.status(400).redirect("/users");
+        res.status(400).redirect(redirectUri);
       });
   },
+  parentsPage: async (req, res) => {
+    const parents = await model.User.findAll({
+      where: { role: "masyarakat" },
+      include: {
+        model: model.Parent,
+        where: {
+          userId: {[op.col]: 'User.id'}
+        }
+      }
+    })
+    res.render("./pages/parents", { parents });
+  },
+  parentsAdd: async (req, res) => {
+    try {
+      let { no_kk, nik, name, email, password } = req.body
+      if (!password) {
+        password = '12345678'
+      }
+      // cek email
+      const userData = await model.User.findOne({ where: { email } })
+      if(userData) {
+        throw new Error('Email ini tidak bisa digunakan!')
+      }
+      bcrypt.hash(password, 10, async (err, hash) => {
+        if (err) {
+          throw new Error(err)
+        }
+        const storedUser = await model.User.create({
+          name,
+          email, 
+          password: hash,
+          posyanduId: req.session.posyanduId
+        })
+        await model.Parent.create({
+          no_kk,
+          nik,
+          userId: storedUser.id
+        })
+        req.flash("alert", {
+          hex: "#28ab55",
+          color: "success",
+          status: "Success",
+        });
+        req.flash("message", `Akun Orang Tua Berhasil Dibuat`);
+        res.redirect("/parents");
+      })      
+    } catch (error) {
+      console.log(error)
+      req.flash("alert", {
+        hex: "#f3616d",
+        color: "danger",
+        status: "Failed",
+      })
+      req.flash("message", error.message);
+      res.redirect("/parents");
+    }
+  },
+  parentsDelete: async (req, res) => {
+    try {
+      const { uuid } = req.params
+      const parent = await model.Parent.findOne({ where: { uuid }})
+      if(!parent) {
+        throw new Error('Data tidak ditemukan')
+      }
+      await model.Parent.destroy({ where: { uuid }})
+      await model.User.destroy({ where: { id: parent.userId }})
+      req.flash("alert", {
+        hex: "#28ab55",
+        color: "success",
+        status: "Success",
+      });
+      req.flash("message", `Akun Orang Tua Berhasil Dihapus`);
+      res.redirect("/parents");
+    } catch (error) {
+      console.log(error)
+      req.flash("alert", {
+        hex: "#f3616d",
+        color: "danger",
+        status: "Failed",
+      })
+      req.flash("message", error.message);
+      res.redirect("/parents");
+    }
+  }
 };

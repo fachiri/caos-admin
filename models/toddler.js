@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       Toddler.hasMany(models.Measurement, {
         foreignKey: "id_toddler",
       });
+      Toddler.hasOne(models.Measurement);
     }
   }
   Toddler.init(

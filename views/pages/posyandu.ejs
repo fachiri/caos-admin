@@ -22,11 +22,12 @@
                                 <tr>
                                     <th>Nama</th>
                                     <th>Alamat</th>
+                                    <th>Admin</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <% data.forEach((data)=>{%>
+                                <% data.forEach((data)=> {%>
 
                                     <tr>
                                         <td>
@@ -34,7 +35,15 @@
                                         </td>
                                         <td>
                                             <%= data.alamat %>
-
+                                        </td>
+                                        <td>
+                                            <% if(data.Users.length > 0) { %>
+                                                <% data.Users.forEach((users)=> { %>
+                                                    <p> <%= users.name %> </p>
+                                                <% }) %>
+                                            <% } else { %>
+                                                <p class="text-warning">Admin tidak ditemukan</p> 
+                                            <% } %>
                                         </td>
                                         <td>
                                             <button class="btn icon btn-success" data-bs-toggle="modal"
@@ -86,6 +95,19 @@
                                     <label class="form-label">Alamat</label>
                                     <input type="text" class="form-control" name="alamat" data-parsley-required="true">
                                 </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Admin</label>
+                                    <select name="id_user" class="form-select choices">
+                                        <% for(user of users) { %>
+                                            <option value="<%= user.id %>">
+                                                <%= `${user.name}` %>
+                                                <% if(user.Posyandus) { %>
+                                                    (Posyandu <%= `${user.Posyandus.nama}` %>)
+                                                <% } %>
+                                            </option>
+                                        <% } %>
+                                    </select>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
@@ -102,7 +124,6 @@
                 </div>
             </div>
             <% for(user of data) { %>
-
                 <div class="modal fade" id="editPosyanduModal<%= user.uuid %>" tabindex="-1" role="dialog"
                     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
@@ -126,6 +147,19 @@
                                         <label class="form-label">Alamat</label>
                                         <input type="text" class="form-control" name="alamat"
                                             value="<%= user.alamat %>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Admin</label>
+                                        <select name="id_user" class="form-select choices">
+                                            <% for(user2 of users) { %>
+                                                <option value="<%= user2.id %>" <%= user2.posyanduId == user.id ? 'selected' : ''  %> >
+                                                    <%= `${user2.name}` %>
+                                                    <% if(user2.Posyandu) { %>
+                                                    (Posyandu <%= `${user2.Posyandu.nama}` %>)
+                                                    <% } %>
+                                                </option>
+                                            <% } %>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -174,7 +208,6 @@
                                             <i class="bx bx-check d-block d-sm-none"></i>
                                             <a href="/posyandu/delete/<%= user.uuid %> "
                                                 class="d-none d-sm-block text-white">Accept</a>
-                                            <!-- <span class=""></span> -->
                                         </button>
                                     </div>
                                 </div>

@@ -34,6 +34,12 @@ Undo migrations or seeders (opsional)
   npx sequelize-cli db:seed:undo:all
 ```
 
+Undo migrations spesific model (opsional)
+
+```bash
+  npx sequelize-cli db:migrate:undo --name 20180704124934-create-branch.js
+```
+
 Run
 
 ```bash
@@ -48,10 +54,14 @@ Run
 - [x] Pengisian form "Umur" otomatis berdasarkan tanggal lahir dan tanggal pengukuran
 - [x] Fix Middleware login semua route
 - [x] Buat endpoint kalkulator stunting
-- [ ] Tambah query params di endpoint get article untuk filter kategori
-- [ ] Buat akun orang tua dan profil posyandu (admin posyandu)
-- [ ] Edit profil dan tambah posyandu (admin puskesmas) [note: sekalian di halaman profil puskesmas]
+- [x] Edit profil puskesmas dan posyandu
+- [x] Edit profil user
 - [x] Tambah data training setiap kali tambah pengukuran
+- [x] Buat akun admin posyandu (admin puskesmas)
+- [x] Tambah posyandu (admin puskesmas)
+- [ ] Buat akun orang tua (admin posyandu)
+- [ ] Filter master toddler (admin posyandu dan puskesmas)
+- [ ] Tambah query params di endpoint get article untuk filter kategori
 
 
 ## Notes

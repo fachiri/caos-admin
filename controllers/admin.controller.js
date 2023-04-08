@@ -592,7 +592,6 @@ module.exports = {
                 attributes: ['jk'],
             }]
         })
-        console.log(fileDataset.length)
         for (const i of allMeasure) {
             let jk2
             if (i.Toddler.jk == 'L') {
@@ -608,7 +607,6 @@ module.exports = {
                 Label: i.predict_result
             })
         }
-
         const measure = await model.Measurement.findOne({ where: { id_toddler: id, current_age: age } })
         if(measure) {
             req.flash('alert', {hex: '#f3616d', color: 'danger', status: 'Failed'})

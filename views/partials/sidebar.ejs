@@ -4,7 +4,6 @@
       <div class="d-flex justify-content-between align-items-center">
         <div class="logo">
           <a href="<%= baseUrl %>">
-            <!-- <img src="images/logo/logo.svg" alt="Logo" /> -->
             <span class="fs-4">SISAGIZ</span>
           </a>
         </div>
@@ -58,6 +57,11 @@
             <li class="submenu-item">
               <a href="<%= baseUrl %>/toddlers">Balita</a>
             </li>
+            <% if(role == 'admin_posyandu') { %>
+            <li class="submenu-item">
+              <a href="<%= baseUrl %>/parents">Akun Orang Tua</a>
+            </li>
+            <% } %>
             <% if(role == 'admin') { %>
             <li class="submenu-item">
               <a href="<%= baseUrl %>/users">Users</a>
@@ -138,6 +142,13 @@
         </li> -->
 
         <li class="sidebar-title">Lainnya</li>
+
+        <li class="sidebar-item">
+          <a href="<%= baseUrl %>/profile" class="sidebar-link">
+            <i class="bi bi-person-circle"></i>
+            <span>Profil</span>
+          </a>
+        </li>
 
         <li class="sidebar-item">
           <a href="<%= baseUrl %>/settings" class="sidebar-link">

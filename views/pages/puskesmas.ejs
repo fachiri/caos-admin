@@ -22,6 +22,7 @@
                                 <tr>
                                     <th>Nama</th>
                                     <th>Alamat</th>
+                                    <th>Admin</th>
                                     <th>Posyandu</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -34,6 +35,15 @@
                                         </td>
                                         <td>
                                             <%= data.alamat %>
+                                        </td>
+                                        <td>
+                                            <% if(data.Users.length > 0) { %>
+                                                <% data.Users.forEach((users)=> { %>
+                                                    <p> <%= users.name %> </p>
+                                                <% }) %>
+                                            <% } else { %>
+                                                <p class="text-warning">Admin tidak ditemukan</p> 
+                                            <% } %>
                                         </td>
                                         <td>
                                             <button class="btn icon btn-info" data-bs-toggle="modal"
@@ -81,6 +91,19 @@
                                     <label class="form-label">Alamat</label>
                                     <input type="text" class="form-control" name="alamat" data-parsley-required="true">
                                 </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Admin</label>
+                                    <select name="id_user" class="form-select choices">
+                                        <% for(user of users) { %>
+                                            <option value="<%= user.id %>">
+                                                <%= `${user.name}` %>
+                                                <% if(user.Puskesma) { %>
+                                                    (Puskesmas <%= `${user.Puskesma.nama}` %>)
+                                                <% } %>
+                                            </option>
+                                        <% } %>
+                                    </select>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
@@ -120,8 +143,20 @@
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Alamat</label>
-                                        <input type="text" class="form-control" name="alamat"
-                                            value="<%= user.alamat %> ">
+                                        <input type="text" class="form-control" name="alamat" value="<%= user.alamat %> ">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Admin</label>
+                                        <select name="id_user" class="form-select choices">
+                                            <% for(user2 of users) { %>
+                                                <option value="<%= user2.id %>" <%= user2.puskesmaId == user.id ? 'selected' : ''  %> >
+                                                    <%= `${user2.name}` %>
+                                                    <% if(user2.Puskesma) { %>
+                                                    (Puskesmas <%= `${user2.Puskesma.nama}` %>)
+                                                    <% } %>
+                                                </option>
+                                            <% } %>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="modal-footer">

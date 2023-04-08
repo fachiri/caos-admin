@@ -9,6 +9,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       User.hasMany(models.Article);
+      User.belongsTo(models.Puskesmas, {
+        foreignKey: "puskesmaId",
+      });
+      User.belongsTo(models.Posyandus, {
+        foreignKey: "posyanduId",
+      });
+      User.hasOne(models.Parent);
     }
   }
   User.init(
@@ -42,6 +49,8 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "active",
       },
       password: DataTypes.STRING,
+      puskesmaId: DataTypes.INTEGER,
+      posyanduId:  DataTypes.INTEGER,
     },
     {
       sequelize,

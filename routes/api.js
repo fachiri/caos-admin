@@ -21,6 +21,9 @@ router.get("/article", articleController.getAllArticle);
 router.get("/article/:uuid", articleController.getSpesificArticle);
 router.get("/calculator", measurementsController.calculator);
 
+// Growth
+router.get("/growth/:uuid", growthController.growthDetail);
+
 router.use(authMiddleware.isLoggedIn)
 
 router.get('/me', authController.me)
@@ -32,8 +35,6 @@ router.get("/posyandu", posyanduController.getAllPosyandu);
 router.get("/posyandu/:uuid", posyanduController.getSpesificPosyandu);
 router.get("/posyandu/:uuid", posyanduController.getSpesificPosyandu);
 
-// Growth
-router.get("/growth/:uuid", growthController.growthDetail);
 
 // measurement
 router.get("/measurement-report", measurementController.measurementReport);
