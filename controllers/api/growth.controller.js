@@ -11,7 +11,7 @@ module.exports = {
             })
             await model.Measurement.findAll({
                 where: {
-                    id_toddler: id
+                    ToddlerId: id
                 },
                 raw: true,
                 order: [
