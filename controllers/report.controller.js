@@ -97,7 +97,9 @@ module.exports = {
       const data = { measures, year: req.params.year, month: req.params.month }
       
       // Create a browser instance
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch({
+        executablePath: '/usr/bin/chromium-browser'
+      });
   
       // Create a new page
       const page = await browser.newPage();
