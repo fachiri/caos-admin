@@ -11,7 +11,9 @@ module.exports = (sequelize, DataTypes) => {
       Toddler.hasMany(models.Measurement, {
         foreignKey: "ToddlerId",
       });
-      Toddler.hasOne(models.Measurement);
+      Toddler.belongsTo(models.Parent, {
+        foreignKey: "parentId"
+      });
     }
   }
   Toddler.init(
@@ -20,13 +22,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         unique: true,
-      },
-      no_kk: {
-        type: DataTypes.STRING,
-        validate: {
-          notEmpty: { msg: "Nomor Kartu Keluarga tidak boleh kosong" },
-          len: { args: [16, 16], msg: "Nomor Kartu Keluarga harus 16 huruf" },
-        },
       },
       nik: {
         type: DataTypes.STRING,
@@ -66,44 +61,6 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: { msg: "Data tidak boleh kosong" },
         },
       },
-      nik_ayah: {
-        type: DataTypes.STRING,
-        validate: {
-          notEmpty: { msg: "NIK Ayah tidak boleh kosong" },
-          len: { args: [16, 16], msg: "NIK harus 16 huruf" },
-        },
-      },
-      nama_ayah: {
-        type: DataTypes.STRING,
-        validate: {
-          notEmpty: { msg: "Nama ayah  tidak boleh kosong" },
-        },
-      },
-      no_bpjs_ayah: {
-        type: DataTypes.STRING,
-        validate: {
-          notEmpty: { msg: "Nomor BPJS Ayah  tidak boleh kosong" },
-        },
-      },
-      nik_ibu: {
-        type: DataTypes.STRING,
-        validate: {
-          notEmpty: { msg: "NIK Ibu tidak boleh kosong" },
-          len: { args: [16, 16], msg: "NIK harus 16 huruf" },
-        },
-      },
-      nama_ibu: {
-        type: DataTypes.STRING,
-        validate: {
-          notEmpty: { msg: "Nama ibu tidak boleh kosong" },
-        },
-      },
-      no_bpjs_ibu: {
-        type: DataTypes.STRING,
-        validate: {
-          notEmpty: { msg: "Nomor BPJS Ibu  tidak boleh kosong" },
-        },
-      },
       address: {
         type: DataTypes.TEXT,
         validate: {
@@ -140,7 +97,8 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: { msg: "Posyandu tidak boleh kosong" },
         },
       },
-    },
+      parentId: DataTypes.INTEGER
+  },
     {
       sequelize,
       modelName: "Toddler",

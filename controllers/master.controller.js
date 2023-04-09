@@ -83,20 +83,45 @@ module.exports = {
       });
   },
   toddlers: async (req, res) => {
-    let regencies;
+    const {role, puskesmaId, posyanduId, userid} = req.session
+    let regencies, myPuskesmas, myPosyandu, data
     const { url, idProv } = apiConfig;
     await fetch(`${url}/regencies/${idProv}.json`)
       .then((response) => response.json())
       .then((result) => (regencies = result));
-    const data = await model.Toddler.findAll({
-      attributes: ["uuid", "name", "birth", "puskesmas", "posyandu"],
-    });
+    if (role == 'admin') {
+      data = await model.Toddler.findAll({
+        attributes: ["uuid", "name", "birth", "puskesmas", "posyandu"],
+      });
+    }
     const puskesmas = await model.Puskesmas.findAll({
       attributes: ["uuid", "nama"],
     });
     const posyandu = await model.Posyandus.findAll({
       attributes: ["uuid", "nama"],
     });
+    const parents = await model.Parent.findAll({
+      attributes: ["id", "no_kk", "nama_ayah", "nama_ibu"],
+    });
+    if (puskesmaId) {
+      myPuskesmas = await model.Puskesmas.findByPk(puskesmaId)
+      myPosyandu = await model.Posyandus.findAll({
+        where: { puskesmaId }
+      })
+      data = await model.Toddler.findAll({
+        attributes: ["uuid", "name", "birth", "puskesmas", "posyandu"],
+        where: { puskesmas: myPuskesmas.nama }
+      });
+    }
+    if (posyanduId) {
+      myPosyandu = await model.Posyandus.findByPk(posyanduId, {
+        include: model.Puskesmas
+      })
+      data = await model.Toddler.findAll({
+        attributes: ["uuid", "name", "birth", "puskesmas", "posyandu"],
+        where: { posyandu: myPosyandu.nama, puskesmas: myPosyandu.Puskesma.nama }
+      });
+    }
     res.render("./pages/toddlers", {
       data,
       regencies,
@@ -104,22 +129,18 @@ module.exports = {
       idProv,
       puskesmas,
       posyandu,
+      parents,
+      myPuskesmas,
+      myPosyandu
     });
   },
   storeToddler: async (req, res) => {
     const {
-      noKk,
       nik,
       noBpjs,
       name,
       birth,
       anakKe,
-      nikAyah,
-      namaAyah,
-      noBpjsAyah,
-      nikIbu,
-      namaIbu,
-      noBpjsIbu,
       address,
       prov,
       kab,
@@ -127,27 +148,22 @@ module.exports = {
       puskesmas,
       posyandu,
       jk,
+      parentId
     } = req.body;
     await model.Toddler.create({
-      no_kk: noKk,
       nik,
       no_bpjs: noBpjs,
       name,
       jk,
       birth,
       anak_ke: anakKe,
-      nik_ayah: nikAyah,
-      nama_ayah: namaAyah,
-      no_bpjs_ayah: noBpjsAyah,
-      nik_ibu: nikIbu,
-      nama_ibu: namaIbu,
-      no_bpjs_ibu: noBpjsIbu,
       address,
       prov,
       kab,
       kec,
       puskesmas,
       posyandu,
+      parentId
     })
       .then(() => {
         req.flash("alert", {
@@ -184,28 +200,7 @@ module.exports = {
     });
     const data = await model.Toddler.findOne({
       where: { uuid: req.params.uuid },
-      attributes: [
-        "uuid",
-        "no_kk",
-        "nik",
-        "no_bpjs",
-        "name",
-        "jk",
-        "birth",
-        "anak_ke",
-        "nik_ayah",
-        "nama_ayah",
-        "no_bpjs_ayah",
-        "nik_ibu",
-        "nama_ibu",
-        "no_bpjs_ibu",
-        "address",
-        "prov",
-        "kab",
-        "kec",
-        "puskesmas",
-        "posyandu",
-      ],
+      include: model.Parent
     });
     res.render("./pages/editToddler", {
       data,
@@ -218,18 +213,11 @@ module.exports = {
   },
   editToddler: async (req, res) => {
     const {
-      noKk,
       nik,
       noBpjs,
       name,
       birth,
       anakKe,
-      nikAyah,
-      namaAyah,
-      noBpjsAyah,
-      nikIbu,
-      namaIbu,
-      noBpjsIbu,
       address,
       prov,
       kab,
@@ -240,19 +228,12 @@ module.exports = {
     } = req.body;
     await model.Toddler.update(
       {
-        no_kk: noKk,
         nik,
         no_bpjs: noBpjs,
         name,
         jk,
         birth,
         anak_ke: anakKe,
-        nik_ayah: nikAyah,
-        nama_ayah: namaAyah,
-        no_bpjs_ayah: noBpjsAyah,
-        nik_ibu: nikIbu,
-        nama_ibu: namaIbu,
-        no_bpjs_ibu: noBpjsIbu,
         address,
         prov,
         kab,
@@ -641,7 +622,7 @@ module.exports = {
   },
   parentsAdd: async (req, res) => {
     try {
-      let { no_kk, nik, name, email, password } = req.body
+      let { no_kk, nama_ayah, nama_ibu, nik_ayah, nik_ibu, no_bpjs_ayah, no_bpjs_ibu, name, email, password } = req.body
       if (!password) {
         password = '12345678'
       }
@@ -662,7 +643,12 @@ module.exports = {
         })
         await model.Parent.create({
           no_kk,
-          nik,
+          nama_ayah,
+          nama_ibu,
+          nik_ayah,
+          nik_ibu,
+          no_bpjs_ayah,
+          no_bpjs_ibu,
           userId: storedUser.id
         })
         req.flash("alert", {
@@ -684,7 +670,7 @@ module.exports = {
       res.redirect("/parents");
     }
   },
-  parentsDelete: async (req, res) => {
+  parentDelete: async (req, res) => {
     try {
       const { uuid } = req.params
       const parent = await model.Parent.findOne({ where: { uuid }})
@@ -692,6 +678,7 @@ module.exports = {
         throw new Error('Data tidak ditemukan')
       }
       await model.Parent.destroy({ where: { uuid }})
+      await model.Toddler.destroy({ where: { parentId: parent.id }})
       await model.User.destroy({ where: { id: parent.userId }})
       req.flash("alert", {
         hex: "#28ab55",

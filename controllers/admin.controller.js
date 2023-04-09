@@ -478,15 +478,20 @@ module.exports = {
         const endMonth = new Date(new Date().setDate(startMonth.getDate() + 29));
         let measureReports = await model.Toddler.findAll({
             // attributes: ['nik', 'name', 'jk', 'birth'],
-            include: [{
-                model: model.Measurement,
-                attributes: ['bb', 'tb', 'date', 'lila', 'lika', 'bbu', 'tbu', 'bbtb'],
-                where: {
-                    date: {
-                        [Op.between]: [startYear, endYear]
+            include: [
+                {
+                    model: model.Measurement,
+                    attributes: ['bb', 'tb', 'date', 'lila', 'lika', 'bbu', 'tbu', 'bbtb'],
+                    where: {
+                        date: {
+                            [Op.between]: [startYear, endYear]
+                        }
                     }
+                },
+                {
+                    model: model.Parent
                 }
-            }]
+            ]
         })
         if(measureReports.length > 0) {
             measureReports = JSON.parse(JSON.stringify(measureReports))

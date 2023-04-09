@@ -8,15 +8,20 @@ module.exports = {
         const endYear = new Date(`12/30/${req.query.yyyy}`)
         await model.Toddler.findAll({
             // attributes: ['nik', 'name', 'birth', 'jk'],
-            include: [{
-                model: model.Measurement,
-                attributes: ['bb', 'tb', 'date', 'lila', 'lika', 'bbu', 'tbu', 'bbtb'],
-                where: {
-                    date: {
-                        [Op.between]: [startYear, endYear]
+            include: [
+                {
+                    model: model.Measurement,
+                    attributes: ['bb', 'tb', 'date', 'lila', 'lika', 'bbu', 'tbu', 'bbtb'],
+                    where: {
+                        date: {
+                            [Op.between]: [startYear, endYear]
+                        }
                     }
+                },
+                {
+                    model: model.Parent
                 }
-            }]
+            ]
         }).then((toddlers) => {
             if(toddlers.length == 0) {
                 return res.status(404).send({

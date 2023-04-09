@@ -151,4 +151,10 @@ router.post(
   masterController.parentsAdd
 )
 
+router.get(
+  "/parents/delete/:uuid",
+  [verifyUser.isLogin],
+  masterController.parentDelete
+)
+
 module.exports = router;

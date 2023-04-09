@@ -10,15 +10,20 @@ module.exports = {
     const endYear = new Date(`01/01/${+req.params.year + 1}`)
     await model.Toddler.findAll({
       // attributes: ['nik', 'name']name,
-      include: [{
-        model: model.Measurement,
-        attributes: ['bb', 'tb', 'date', 'lila', 'lika', 'bbu', 'tbu', 'bbtb'],
-        where: {
-            date: {
-                [Op.between]: [startYear, endYear]
-            }
+      include: [
+        {
+          model: model.Measurement,
+          attributes: ['bb', 'tb', 'date', 'lila', 'lika', 'bbu', 'tbu', 'bbtb'],
+          where: {
+              date: {
+                  [Op.between]: [startYear, endYear]
+              }
+          }
+        },
+        {
+          model: model.Parent
         }
-      }]
+      ]
     }).then(async (toddlers) => {
       toddlers = JSON.parse(JSON.stringify(toddlers))
 
@@ -44,8 +49,8 @@ module.exports = {
 
       // Create a browser instance
       const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disabled-setupid-sandbox"],
-  });
+        args: ["--no-sandbox", "--disabled-setupid-sandbox"],
+      });
   
       // Create a new page
       const page = await browser.newPage();
@@ -100,8 +105,7 @@ module.exports = {
       
       // Create a browser instance
       const browser = await puppeteer.launch({
-        headless: false,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        args: ["--no-sandbox", "--disabled-setupid-sandbox"],
       });
   
       // Create a new page

@@ -75,7 +75,7 @@
       {{#if toddlers}}
       {{#each toddlers as | toddler |}}
       <tr>
-        <td rowspan="7">{{ toddler.no_kk }}</td>
+        <td rowspan="7">{{ toddler.Parent.no_kk }}</td>
         <td rowspan="3">{{ toddler.name }}</td>
         <td rowspan="7">{{ toddler.birth }}</td>
         <td rowspan="7">{{ toddler.jk }}</td>
@@ -87,8 +87,8 @@
         {{/each}}
       </tr>
       <tr>
-        <td rowspan="2">{{ toddler.nama_ayah }}</td>
-        <td rowspan="2">{{ toddler.nama_ibu }}</td>
+        <td rowspan="2">{{ toddler.Parent.nama_ayah }}</td>
+        <td rowspan="2">{{ toddler.Parent.nama_ibu }}</td>
         <td>TB</td>
         {{#each toddler.Measurements as | measure |}}
           <td>{{ measure.tb }}</td>
@@ -102,8 +102,8 @@
       </tr>
       <tr>
         <td rowspan="2">{{ toddler.nik }}</td>
-        <td rowspan="2">{{ toddler.nik_ayah }}</td>
-        <td rowspan="2">{{ toddler.nik_ibu }}</td>
+        <td rowspan="2">{{ toddler.Parent.nik_ayah }}</td>
+        <td rowspan="2">{{ toddler.Parent.nik_ibu }}</td>
         <td>LiLa</td>
         {{#each toddler.Measurements as | measure |}}
           <td>{{ measure.lila }}</td>
@@ -117,8 +117,8 @@
       </tr>
       <tr>
         <td rowspan="2">{{ toddler.no_bpjs }}</td>
-        <td rowspan="2">{{ toddler.no_bpjs_ayah }}</td>
-        <td rowspan="2">{{ toddler.no_bpjs_ibu }}</td>
+        <td rowspan="2">{{ toddler.Parent.no_bpjs_ayah }}</td>
+        <td rowspan="2">{{ toddler.Parent.no_bpjs_ibu }}</td>
         <td>TB/U</td>
         {{#each toddler.Measurements as | measure |}}
           <td>{{ measure.tbu }}</td>

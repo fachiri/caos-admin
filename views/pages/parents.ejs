@@ -23,8 +23,13 @@
             <thead>
               <tr>
                 <th>No. KK</th>
-                <th>NIK</th>
-                <th>Nama</th>
+                <th>NIK Ayah</th>
+                <th>Nama Ayah</th>
+                <th>No. BPJS Ayah</th>
+                <th>NIK Ibu</th>
+                <th>Nama Ibu</th>
+                <th>No. BPJS Ibu</th>
+                <th>Nama Akun</th>
                 <th>Email</th>
                 <th>Status</th>
                 <th>Aksi</th>
@@ -34,7 +39,12 @@
               <% parents.forEach(e => { %>
               <tr>
                 <td><%= e.Parent.no_kk %></td>
-                <td><%= e.Parent.nik %></td>
+                <td><%= e.Parent.nik_ayah %></td>
+                <td><%= e.Parent.nama_ayah %></td>
+                <td><%= e.Parent.no_bpjs_ayah %></td>
+                <td><%= e.Parent.nik_ibu %></td>
+                <td><%= e.Parent.nama_ibu %></td>
+                <td><%= e.Parent.no_bpjs_ibu %></td>
                 <td><%= e.name %></td>
                 <td><%= e.email %></td>
                 <td><%= e.status %></td>
@@ -48,6 +58,9 @@
                       <i class="bi bi-person-dash"></i>
                     </button>
                   <%} %>
+                  <button class="btn icon btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModalCenter<%= e.uuid %>">
+                    <i class="bi bi-trash"></i>
+                  </button>
                 </td>
               </tr>
               <% }) %>
@@ -64,11 +77,31 @@
             <form action="parents/add" method="post" data-parsley-validate>
               <div class="mb-3">
                 <label class="form-label">Nomor Kartu Keluarga</label>
-                <input type="text" class="form-control" name="no_kk" data-parsley-required="true">
+                <input type="text" class="form-control" name="no_kk" data-parsley-required="true" data-parsley-length="[16, 16]" data-parsley-type="number">
               </div>
               <div class="mb-3">
-                <label class="form-label">NIK</label>
-                <input type="text" class="form-control" name="nik" data-parsley-required="true">
+                <label class="form-label">NIK Ayah</label>
+                <input type="text" class="form-control" name="nik_ayah" data-parsley-required="true">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">NIK Ibu</label>
+                <input type="text" class="form-control" name="nik_ibu" data-parsley-required="true">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nama Ayah</label>
+                <input type="text" class="form-control" name="nama_ayah" data-parsley-required="true">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nama Ibu</label>
+                <input type="text" class="form-control" name="nama_ibu" data-parsley-required="true">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nomor BPJS Ayah</label>
+                <input type="text" class="form-control" name="no_bpjs_ayah" data-parsley-required="true">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nomor BPJS Ibu</label>
+                <input type="text" class="form-control" name="no_bpjs_ibu" data-parsley-required="true">
               </div>
               <div class="mb-3">
                 <label class="form-label">Nama</label>
@@ -123,6 +156,40 @@
             <button type="submit" class="btn btn-primary ml-1">
               <i class="bx bx-check d-block d-sm-none"></i>
               <a href="/users/editstatus/<%= user.uuid %>?from=parents" class="d-none d-sm-block text-white">Accept</a>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+  <!-- modal delete -->
+  <% for(user of parents) { %>
+    <div class="modal fade" id="deleteModalCenter<%= user.uuid %>" tabindex=" -1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+        role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalCenterTitle">
+              Hapus Akun
+            </h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <i data-feather="x"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <p class="text-danger">Menghapus akun orangtua akan menghapus data anak yang terhubung dengan akun ini!</p>
+              <p>Apakah anda yakin menghapus akun ini?</p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+              <i class="bx bx-x d-block d-sm-none"></i>
+              <span class="d-none d-sm-block">Close</span>
+            </button>
+            <button type="submit" class="btn btn-primary ml-1">
+              <i class="bx bx-check d-block d-sm-none"></i>
+              <a href="/parents/delete/<%= user.Parent.uuid %>" class="d-none d-sm-block text-white">Accept</a>
             </button>
           </div>
         </div>
