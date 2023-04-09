@@ -239,7 +239,7 @@
                   <% } %> 
                   <% for(i of measureReports) { %> 
                   <tr>
-                    <td rowspan="7"><%= i.no_kk %></td>
+                    <td rowspan="7"><%= i.Parent.no_kk %></td>
                     <td rowspan="3"><%= i.name %></td>
                     <td rowspan="7"><%= i.birth %></td>
                     <td rowspan="7"><%= i.jk %></td>
@@ -251,8 +251,8 @@
                     <% } %> 
                   </tr>
                   <tr>
-                    <td rowspan="2"><%= i.nama_ayah %></td>
-                    <td rowspan="2"><%= i.nama_ibu %></td>
+                    <td rowspan="2"><%= i.Parent.nama_ayah %></td>
+                    <td rowspan="2"><%= i.Parent.nama_ibu %></td>
                     <td>TB</td>
                     <% for(j of i.Measurements) { %> 
                       <td><%= j.tb %></td>
@@ -266,8 +266,8 @@
                   </tr>
                   <tr>
                     <td rowspan="2"><%= i.nik %></td>
-                    <td rowspan="2"><%= i.nik_ayah %></td>
-                    <td rowspan="2"><%= i.nik_ibu %></td>
+                    <td rowspan="2"><%= i.Parent.nik_ayah %></td>
+                    <td rowspan="2"><%= i.Parent.nik_ibu %></td>
                     <td>LiLa</td>
                     <% for(j of i.Measurements) { %> 
                       <td><%= j.lila %></td>
@@ -281,8 +281,8 @@
                   </tr>
                   <tr>
                     <td rowspan="2"><%= i.no_bpjs %></td>
-                    <td rowspan="2"><%= i.no_bpjs_ayah %></td>
-                    <td rowspan="2"><%= i.no_bpjs_ibu %></td>
+                    <td rowspan="2"><%= i.Parent.no_bpjs_ayah %></td>
+                    <td rowspan="2"><%= i.Parent.no_bpjs_ibu %></td>
                     <td>TB/U</td>
                     <% for(j of i.Measurements) { %> 
                       <td><%= j.tbu %></td>
@@ -382,7 +382,7 @@
             }
             rows += `
               <tr>
-                <td rowspan="7">${i.no_kk}</td>
+                <td rowspan="7">${i.Parent.no_kk}</td>
                 <td rowspan="3">${i.name}</td>
                 <td rowspan="7">${i.birth}</td>
                 <td rowspan="7">${i.jk}</td>
@@ -392,8 +392,8 @@
                 ${tr1}
               </tr>
               <tr>
-                <td rowspan="2">${i.nama_ayah}</td>
-                <td rowspan="2">${i.nama_ibu}</td>
+                <td rowspan="2">${i.Parent.nama_ayah}</td>
+                <td rowspan="2">${i.Parent.nama_ibu}</td>
                 <td>TB</td>
                 ${tr2}
               </tr>
@@ -403,8 +403,8 @@
               </tr>
               <tr>
                 <td rowspan="2">${i.nik}</td>
-                <td rowspan="2">${i.nik_ayah}</td>
-                <td rowspan="2">${i.nik_ibu}</td>
+                <td rowspan="2">${i.Parent.nik_ayah}</td>
+                <td rowspan="2">${i.Parent.nik_ibu}</td>
                 <td>LiLa</td>
                 ${tr4}
               </tr>
@@ -414,8 +414,8 @@
               </tr>
               <tr>
                 <td rowspan="2">${i.no_bpjs}</td>
-                <td rowspan="2">${i.no_bpjs_ayah}</td>
-                <td rowspan="2">${i.no_bpjs_ibu}</td>
+                <td rowspan="2">${i.Parent.no_bpjs_ayah}</td>
+                <td rowspan="2">${i.Parent.no_bpjs_ibu}</td>
                 <td>TB/U</td>
                 ${tr6}
               </tr>

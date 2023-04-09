@@ -66,9 +66,16 @@
             <div class="card-body">
               <form action="toddler/store" method="post" data-parsley-validate>
                 <div class="mb-3">
-                  <label class="form-label">Nomor Kartu Keluarga</label>
-                  <input type="text" class="form-control" name="noKk" data-parsley-required="true"
-                    data-parsley-length="[16, 16]" data-parsley-type="number">
+                  <label class="form-label">Pilih Orang Tua</label>
+                  <select name="parentId" class="form-select choices">
+                    <% for(parent of parents) { %>
+                      <option value="<%= parent.id %>">
+                        No. KK: <%= `${parent.no_kk}` %>,
+                        Ayah: <%= `${parent.nama_ayah}` %>,
+                        Ibu: <%= `${parent.nama_ibu}` %>
+                      </option>
+                    <% } %>
+                    </select>
                 </div>
                 <div class="mb-3">
                   <label class="form-label">NIK</label>
@@ -102,30 +109,6 @@
                   <input type="text" class="form-control" name="anakKe" data-parsley-required="true">
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">NIK Ayah</label>
-                  <input type="text" class="form-control" name="nikAyah" data-parsley-required="true">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Nama Ayah</label>
-                  <input type="text" class="form-control" name="namaAyah" data-parsley-required="true">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Nomor BPJS Ayah</label>
-                  <input type="text" class="form-control" name="noBpjsAyah" data-parsley-required="true">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">NIK Ibu</label>
-                  <input type="text" class="form-control" name="nikIbu" data-parsley-required="true">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Nama Ibu</label>
-                  <input type="text" class="form-control" name="namaIbu" data-parsley-required="true">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Nomor BPJS Ibu</label>
-                  <input type="text" class="form-control" name="noBpjsIbu" data-parsley-required="true">
-                </div>
-                <div class="mb-3">
                   <label class="form-label">Alamat</label>
                   <textarea name="address" class="form-control" rows="3" data-parsley-required="true"></textarea>
                 </div>
@@ -154,31 +137,67 @@
                     <option value="0"></option>
                   </select>
                 </div>
-                <div class="mb-3">
-                  <label class="form-label">Puskesmas</label>
-                  <select class="form-select" name="puskesmas" data-parsley-minLength="2"
-                    data-parsley-error-message="Pilih Puskesmas">
-                    <option value="0"></option>
-                    <% for(i of puskesmas) { %>
-                      <option value="<%= i.nama %>">
-                        <%= i.nama %>
-                      </option>
-                      <% } %>
-                  </select>
-                </div>
 
-                <div class="mb-3">
-                  <label class="form-label">Posyandu</label>
-                  <select class="form-select" name="posyandu" data-parsley-minLength="2"
-                    data-parsley-error-message="Pilih Posyandu">
-                    <option value="0"></option>
-                    <% for(i of posyandu) { %>
-                      <option value="<%= i.nama %>">
-                        <%= i.nama %>
-                      </option>
-                      <% } %>
-                  </select>
-                </div>
+                <% if(role == 'admin') { %>
+                  <div class="mb-3">
+                    <label class="form-label">Puskesmas</label>
+                    <select class="form-select" name="puskesmas" data-parsley-minLength="2"
+                      data-parsley-error-message="Pilih Puskesmas">
+                      <option value="0"></option>
+                      <% for(i of puskesmas) { %>
+                        <option value="<%= i.nama %>">
+                          <%= i.nama %>
+                        </option>
+                        <% } %>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Posyandu</label>
+                    <select class="form-select" name="posyandu" data-parsley-minLength="2"
+                      data-parsley-error-message="Pilih Posyandu">
+                      <option value="0"></option>
+                      <% for(i of posyandu) { %>
+                        <option value="<%= i.nama %>">
+                          <%= i.nama %>
+                        </option>
+                        <% } %>
+                    </select>
+                  </div>
+                <% } %>
+
+                <% if(role == 'admin_puskesmas') { %>
+                  <div class="mb-3">
+                    <label class="form-label">Puskesmas</label>
+                    <input type="text" class="form-control" value="<%= myPuskesmas.nama %>" disabled>
+                    <input type="hidden" name="puskesmas" value="<%= myPuskesmas.nama %>">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Posyandu</label>
+                    <select class="form-select" name="posyandu" data-parsley-minLength="2"
+                      data-parsley-error-message="Pilih Posyandu">
+                      <option value="0"></option>
+                      <% for(i of myPosyandu) { %>
+                        <option value="<%= i.nama %>">
+                          <%= i.nama %>
+                        </option>
+                        <% } %>
+                    </select>
+                  </div>
+                <% } %>
+
+                <% if(role == 'admin_posyandu') { %>
+                  <div class="mb-3">
+                    <label class="form-label">Puskesmas</label>
+                    <input type="text" class="form-control" value="<%= myPosyandu.Puskesma.nama %>" disabled>
+                    <input type="hidden" name="puskesmas" value="<%= myPosyandu.Puskesma.nama %>">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Posyandu</label>
+                    <input type="text" class="form-control" value="<%= myPosyandu.nama %>" disabled>
+                    <input type="hidden" name="posyandu" value="<%= myPosyandu.nama %>">
+                  </div>
+                <% } %>
+
                 <div class="text-end">
                   <button type="submit" class="btn btn-primary">
                     <span class="d-none d-sm-block">Submit</span>

@@ -10,15 +10,20 @@ module.exports = {
     const endYear = new Date(`01/01/${+req.params.year + 1}`)
     await model.Toddler.findAll({
       // attributes: ['nik', 'name']name,
-      include: [{
-        model: model.Measurement,
-        attributes: ['bb', 'tb', 'date', 'lila', 'lika', 'bbu', 'tbu', 'bbtb'],
-        where: {
-            date: {
-                [Op.between]: [startYear, endYear]
-            }
+      include: [
+        {
+          model: model.Measurement,
+          attributes: ['bb', 'tb', 'date', 'lila', 'lika', 'bbu', 'tbu', 'bbtb'],
+          where: {
+              date: {
+                  [Op.between]: [startYear, endYear]
+              }
+          }
+        },
+        {
+          model: model.Parent
         }
-      }]
+      ]
     }).then(async (toddlers) => {
       toddlers = JSON.parse(JSON.stringify(toddlers))
 
