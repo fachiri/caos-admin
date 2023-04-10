@@ -78,7 +78,9 @@ module.exports = {
                     name: userData.name,
                     email: userData.email,
                     role: userData.role,
-                    status: userData.status
+                    status: userData.status,
+                    puskesmaId: userData.puskesmaId,
+                    posyanduId: userData.posyanduId
                 }
               })
             }

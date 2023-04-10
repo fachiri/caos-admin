@@ -3,3 +3,4 @@ config/config.json
 public/images/uploads/*
 public/report/*
 package-lock.json
+.cache
