@@ -21,6 +21,7 @@ module.exports = {
         where: {
           uuid: req.params.uuid,
         },
+        include: model.Parent
       });
       if (!data)
         return res
@@ -33,6 +34,10 @@ module.exports = {
       });
     } catch (error) {
       console.log(error.message);
+      res.status(400).json({
+        status: "Failed",
+        message: error.message,
+      });
     }
   },
   storeToddler: async (req, res) => {
