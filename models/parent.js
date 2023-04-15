@@ -45,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
     no_bpjs_ayah: {
       type: DataTypes.STRING,
       validate: {
-        notEmpty: { msg: "Nomor BPJS Ayah  tidak boleh kosong" },
+        notEmpty: { msg: "Nomor BPJS Ayah tidak boleh kosong" },
       },
     },
     nik_ibu: {

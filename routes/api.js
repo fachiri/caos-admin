@@ -8,7 +8,8 @@ const {
   measurementController,
   growthController,
   measurementsController,
-  toddlersController
+  toddlersController,
+  parentController
 } = require("../controllers/api")
 const { authMiddleware } = require("../middlewares/api")
 
@@ -45,9 +46,12 @@ router.get("/toddlers/:uuid", toddlersController.getSpesicificToddler);
 router.post("/toddlers/", toddlersController.storeToddler);
 router.put("/toddlers/:uuid", toddlersController.editToddler);
 
-// //measurement
+// measurement
 router.get("/measurement", measurementsController.getAllMeasurements);
 router.get("/measurement/:uuid", measurementsController.getDetailMeasurements);
 router.post("/measurement", measurementsController.storeMeasurement);
+
+// parents
+router.get("/parents", parentController.getAll)
 
 module.exports = router;
