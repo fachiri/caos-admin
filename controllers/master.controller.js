@@ -108,7 +108,7 @@ module.exports = {
         where: { puskesmaId }
       })
       data = await model.Toddler.findAll({
-        where: { puskesmas: myPuskesmas.nama },
+        where: { puskesmaId },
         include: [
           { model: model.Puskesmas },
           { model: model.Posyandus }
@@ -120,7 +120,7 @@ module.exports = {
         include: model.Puskesmas
       })
       data = await model.Toddler.findAll({
-        where: { posyandu: myPosyandu.nama, puskesmas: myPosyandu.Puskesma.nama },
+        where: { posyanduId, puskesmaId: myPosyandu.Puskesma.id },
         include: [
           { model: model.Puskesmas },
           { model: model.Posyandus }
