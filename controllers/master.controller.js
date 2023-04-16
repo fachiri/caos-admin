@@ -100,8 +100,15 @@ module.exports = {
     const puskesmas = await model.Puskesmas.findAll()
     const posyandu = await model.Posyandus.findAll()
     const parents = await model.Parent.findAll({
-      attributes: ["id", "no_kk", "nama_ayah", "nama_ibu"],
+      include: [
+        {
+          model: model.User,
+          include: model.Posyandus
+        }
+      ],
+      raw: true
     });
+    console.log(parents)
     if (puskesmaId) {
       myPuskesmas = await model.Puskesmas.findByPk(puskesmaId)
       myPosyandu = await model.Posyandus.findAll({
@@ -269,7 +276,8 @@ module.exports = {
         uuid: response.uuid,
       },
     })
-      .then((result) => {
+      .then(async () => {
+        await model.Measurement.destroy({ where: { ToddlerId: response.id } })
         req.flash("alert", {
           hex: "#28ab55",
           color: "success",
@@ -600,7 +608,6 @@ module.exports = {
         }
       }
     })
-    console.log(parents)
     res.render("./pages/parents", { parents });
   },
   parentsAdd: async (req, res) => {

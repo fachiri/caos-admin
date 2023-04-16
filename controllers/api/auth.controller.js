@@ -50,6 +50,7 @@ module.exports = {
       include: [
         { model: model.Puskesmas },
         { model: model.Posyandus },
+        { model: model.Parent },
       ]
     })
       .then((userData) => {
@@ -86,7 +87,8 @@ module.exports = {
                     role: userData.role,
                     status: userData.status,
                     puskesmas_uuid: userData.Puskesma ? userData.Puskesma.uuid : null,
-                    posyandu_uuid: userData.Posyandu ? userData.Posyandu.uuid : null
+                    posyandu_uuid: userData.Posyandu ? userData.Posyandu.uuid : null,
+                    parent_uuid: userData.Parent ? userData.Parent.uuid : null
                 }
               })
             }

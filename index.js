@@ -37,6 +37,8 @@ app.use((req, res, next) => {
     baseUrl = `${req.protocol}://${req.headers.host}`
     dirName = __dirname
     res.locals.role = req.session.role;
+    res.locals.posyanduId = req.session.posyanduId;
+    res.locals.puskesmaId = req.session.puskesmaId;
     next();
 });
 

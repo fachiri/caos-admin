@@ -69,11 +69,27 @@
                   <label class="form-label">Pilih Orang Tua</label>
                   <select name="parentId" class="form-select choices">
                     <% for(parent of parents) { %>
-                      <option value="<%= parent.id %>">
-                        No. KK: <%= `${parent.no_kk}` %>,
-                        Ayah: <%= `${parent.nama_ayah}` %>,
-                        Ibu: <%= `${parent.nama_ibu}` %>
-                      </option>
+                      <% if(role == 'admin_posyandu' && posyanduId == parent['User.posyanduId']) { %>
+                        <option value="<%= parent.id %>">
+                          No. KK: <%= `${parent.no_kk}` %>,
+                          Ayah: <%= `${parent.nama_ayah}` %>,
+                          Ibu: <%= `${parent.nama_ibu}` %>
+                        </option>
+                      <% } %>
+                      <% if (role == 'admin_puskesmas' && puskesmaId == parent['User.Posyandu.puskesmaId']) { %>
+                        <option value="<%= parent.id %>">
+                          No. KK: <%= `${parent.no_kk}` %>,
+                          Ayah: <%= `${parent.nama_ayah}` %>,
+                          Ibu: <%= `${parent.nama_ibu}` %>
+                        </option>
+                      <% } %>
+                      <% if (role == 'admin') { %>
+                        <option value="<%= parent.id %>">
+                          No. KK: <%= `${parent.no_kk}` %>,
+                          Ayah: <%= `${parent.nama_ayah}` %>,
+                          Ibu: <%= `${parent.nama_ibu}` %>
+                        </option>
+                      <% } %>
                     <% } %>
                     </select>
                 </div>
@@ -237,7 +253,8 @@
               </div>
               <div class="modal-body">
                 <div class="mb-3">
-                  <p>Apakah Anda Yakin Menghapus Balita Ini?</p>
+                  <p class="text-danger">Semua data pengukuran yang terhubung dengan balita ini akan terhapus.</p>
+                  <p>Apakah anda yakin untuk menghapus?</p>
                 </div>
               </div>
               <div class="modal-footer">
