@@ -590,8 +590,9 @@ module.exports = {
       });
   },
   parentsPage: async (req, res) => {
+    const { puskesmaId, posyanduId } = req.session
     const parents = await model.User.findAll({
-      where: { role: "masyarakat" },
+      where: { role: "masyarakat", puskesmaId, posyanduId },
       include: {
         model: model.Parent,
         where: {
@@ -599,6 +600,7 @@ module.exports = {
         }
       }
     })
+    console.log(parents)
     res.render("./pages/parents", { parents });
   },
   parentsAdd: async (req, res) => {

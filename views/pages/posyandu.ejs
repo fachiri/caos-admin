@@ -101,8 +101,8 @@
                                         <% for(user of users) { %>
                                             <option value="<%= user.id %>">
                                                 <%= `${user.name}` %>
-                                                <% if(user.Posyandus) { %>
-                                                    (Posyandu <%= `${user.Posyandus.nama}` %>)
+                                                <% if(user.Posyandu) { %>
+                                                    (Posyandu <%= `${user.Posyandu.nama}` %>)
                                                 <% } %>
                                             </option>
                                         <% } %>
