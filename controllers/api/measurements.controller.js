@@ -181,13 +181,11 @@ module.exports = {
   },
   calculator: async (req, res) => {
     try {
-      console.log(req.query)
       const { age, bb, tb, jk } = req.query
-      const method = "telentang"
 
-      const bbu = getZscore("BBU", +age, +bb, +tb, method, jk);
-      const tbu = getZscore("TBU", +age, +bb, +tb, method, jk);
-      const bbtb = getZscore("BBTB", +age, +bb, +tb, method, jk);
+      const bbu = algorithm.getZscore("BBU", +age, +bb, +tb, jk);
+      const tbu = algorithm.getZscore("TBU", +age, +bb, +tb, jk);
+      const bbtb = algorithm.getZscore("BBTB", +age, +bb, +tb, jk);
 
       if(bbu.status == false) {
         return res.status(bbu.code).json({
