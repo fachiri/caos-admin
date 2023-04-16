@@ -338,9 +338,7 @@ module.exports = {
         res.redirect('/dataprediction')
     },
     growth: async (req, res) => {
-        const data = await model.Toddler.findAll({
-            attributes: ['uuid' ,'name', 'birth', 'puskesmas', 'posyandu']
-        })
+        const data = await model.Toddler.findAll()
         res.render('./pages/growth', { data })
     },
     growthDetail: async (req, res) => {
