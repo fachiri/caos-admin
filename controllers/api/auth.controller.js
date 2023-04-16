@@ -45,7 +45,13 @@ module.exports = {
   },
   login: async (req, res) => {
     // cek email
-    await model.User.findOne({ where: { email: req.body.email } })
+    await model.User.findOne({ 
+      where: { email: req.body.email }, 
+      include: [
+        { model: model.Puskesmas },
+        { model: model.Posyandus },
+      ]
+    })
       .then((userData) => {
         if (userData === null) {
           res.status(409).send({
@@ -79,8 +85,8 @@ module.exports = {
                     email: userData.email,
                     role: userData.role,
                     status: userData.status,
-                    puskesmaId: userData.puskesmaId,
-                    posyanduId: userData.posyanduId
+                    puskesmas_uuid: userData.Puskesma ? userData.Puskesma.uuid : null,
+                    posyandu_uuid: userData.Posyandu ? userData.Posyandu.uuid : null
                 }
               })
             }
