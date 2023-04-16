@@ -3,7 +3,11 @@ const model = require("../../models/index");
 module.exports = {
   getAllToddlers: async (req, res) => {
     await model.Toddler.findAll({
-      include: model.Parent
+      include: [
+        { model: model.Parent },
+        { model: model.Puskesmas },
+        { model: model.Posyandus }
+      ]
     })
       .then((result) => {
         res

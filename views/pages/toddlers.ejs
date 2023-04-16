@@ -39,10 +39,10 @@
                         <%= toddler.birth %>
                       </td>
                       <td>
-                        <%= toddler.puskesmas %>
+                        <%= toddler.Puskesma.nama %>
                       </td>
                       <td>
-                        <%= toddler.posyandu %>
+                        <%= toddler.Posyandu.nama %>
                       </td>
                       <td>
                         <a href="#" class="btn icon btn-info">
@@ -141,11 +141,11 @@
                 <% if(role == 'admin') { %>
                   <div class="mb-3">
                     <label class="form-label">Puskesmas</label>
-                    <select class="form-select" name="puskesmas" data-parsley-minLength="2"
+                    <select class="form-select" name="puskesmas" data-parsley-maxLength="5"
                       data-parsley-error-message="Pilih Puskesmas">
-                      <option value="0"></option>
+                      <option value="123456"></option>
                       <% for(i of puskesmas) { %>
-                        <option value="<%= i.nama %>">
+                        <option value="<%= i.id %>">
                           <%= i.nama %>
                         </option>
                         <% } %>
@@ -153,11 +153,11 @@
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Posyandu</label>
-                    <select class="form-select" name="posyandu" data-parsley-minLength="2"
+                    <select class="form-select" name="posyandu" data-parsley-maxLength="5"
                       data-parsley-error-message="Pilih Posyandu">
-                      <option value="0"></option>
+                      <option value="123456"></option>
                       <% for(i of posyandu) { %>
-                        <option value="<%= i.nama %>">
+                        <option value="<%= i.id %>">
                           <%= i.nama %>
                         </option>
                         <% } %>
@@ -169,7 +169,7 @@
                   <div class="mb-3">
                     <label class="form-label">Puskesmas</label>
                     <input type="text" class="form-control" value="<%= myPuskesmas.nama %>" disabled>
-                    <input type="hidden" name="puskesmas" value="<%= myPuskesmas.nama %>">
+                    <input type="hidden" name="puskesmas" value="<%= myPuskesmas.id %>">
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Posyandu</label>
@@ -177,7 +177,7 @@
                       data-parsley-error-message="Pilih Posyandu">
                       <option value="0"></option>
                       <% for(i of myPosyandu) { %>
-                        <option value="<%= i.nama %>">
+                        <option value="<%= i.id %>">
                           <%= i.nama %>
                         </option>
                         <% } %>
@@ -189,12 +189,12 @@
                   <div class="mb-3">
                     <label class="form-label">Puskesmas</label>
                     <input type="text" class="form-control" value="<%= myPosyandu.Puskesma.nama %>" disabled>
-                    <input type="hidden" name="puskesmas" value="<%= myPosyandu.Puskesma.nama %>">
+                    <input type="hidden" name="puskesmas" value="<%= myPosyandu.Puskesma.id %>">
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Posyandu</label>
                     <input type="text" class="form-control" value="<%= myPosyandu.nama %>" disabled>
-                    <input type="hidden" name="posyandu" value="<%= myPosyandu.nama %>">
+                    <input type="hidden" name="posyandu" value="<%= myPosyandu.id %>">
                   </div>
                 <% } %>
 

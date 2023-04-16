@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Puskesmas.hasMany(models.Posyandus);
       Puskesmas.hasMany(models.User);
+      Puskesmas.hasMany(models.Toddler);
     }
   }
   Puskesmas.init(

@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "puskesmaId",
       });
       Posyandu.hasMany(models.User);
+      Posyandu.hasMany(models.Toddler);
     }
   }
   Posyandu.init(

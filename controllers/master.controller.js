@@ -91,15 +91,14 @@ module.exports = {
       .then((result) => (regencies = result));
     if (role == 'admin') {
       data = await model.Toddler.findAll({
-        attributes: ["uuid", "name", "birth", "puskesmas", "posyandu"],
+        include: [
+          { model: model.Puskesmas },
+          { model: model.Posyandus }
+        ]
       });
     }
-    const puskesmas = await model.Puskesmas.findAll({
-      attributes: ["uuid", "nama"],
-    });
-    const posyandu = await model.Posyandus.findAll({
-      attributes: ["uuid", "nama"],
-    });
+    const puskesmas = await model.Puskesmas.findAll()
+    const posyandu = await model.Posyandus.findAll()
     const parents = await model.Parent.findAll({
       attributes: ["id", "no_kk", "nama_ayah", "nama_ibu"],
     });
@@ -109,8 +108,11 @@ module.exports = {
         where: { puskesmaId }
       })
       data = await model.Toddler.findAll({
-        attributes: ["uuid", "name", "birth", "puskesmas", "posyandu"],
-        where: { puskesmas: myPuskesmas.nama }
+        where: { puskesmas: myPuskesmas.nama },
+        include: [
+          { model: model.Puskesmas },
+          { model: model.Posyandus }
+        ]
       });
     }
     if (posyanduId) {
@@ -118,8 +120,11 @@ module.exports = {
         include: model.Puskesmas
       })
       data = await model.Toddler.findAll({
-        attributes: ["uuid", "name", "birth", "puskesmas", "posyandu"],
-        where: { posyandu: myPosyandu.nama, puskesmas: myPosyandu.Puskesma.nama }
+        where: { posyandu: myPosyandu.nama, puskesmas: myPosyandu.Puskesma.nama },
+        include: [
+          { model: model.Puskesmas },
+          { model: model.Posyandus }
+        ]
       });
     }
     res.render("./pages/toddlers", {
@@ -135,56 +140,32 @@ module.exports = {
     });
   },
   storeToddler: async (req, res) => {
-    const {
-      nik,
-      noBpjs,
-      name,
-      birth,
-      anakKe,
-      address,
-      prov,
-      kab,
-      kec,
-      puskesmas,
-      posyandu,
-      jk,
-      parentId
-    } = req.body;
-    await model.Toddler.create({
-      nik,
-      no_bpjs: noBpjs,
-      name,
-      jk,
-      birth,
-      anak_ke: anakKe,
-      address,
-      prov,
-      kab,
-      kec,
-      puskesmas,
-      posyandu,
-      parentId
-    })
-      .then(() => {
-        req.flash("alert", {
-          hex: "#28ab55",
-          color: "success",
-          status: "Success",
-        });
-        req.flash("message", "Balita berhasil ditambahkan");
+    try {
+      const { nik, noBpjs, name, birth, anakKe, address, prov, kab, kec, puskesmas, posyandu, jk, parentId } = req.body;
+      await model.Toddler.create({
+        nik,
+        no_bpjs: noBpjs,
+        name,
+        jk,
+        birth,
+        anak_ke: anakKe,
+        address,
+        prov,
+        kab,
+        kec,
+        puskesmaId: puskesmas,
+        posyanduId: posyandu,
+        parentId
       })
-      .catch((err) => {
-        if (err) {
-          console.log(err.errors);
-        }
-        req.flash("alert", {
-          hex: "#f3616d",
-          color: "danger",
-          status: "Failed",
-        });
-        req.flash("message", "Gagal menambahkan data");
-      });
-    res.redirect("/toddlers");
+      req.flash("alert", { hex: "#28ab55", color: "success", status: "Success" })
+      req.flash("message", "Balita berhasil ditambahkan")
+      res.redirect("/toddlers")
+    } catch (error) {
+      console.log(error)
+      req.flash("alert", { hex: "#f3616d", color: "danger", status: "Failed" })
+      req.flash("message", error.message)
+      res.redirect("/toddlers")
+    }
   },
   editToddlerPage: async (req, res) => {
     let regencies;

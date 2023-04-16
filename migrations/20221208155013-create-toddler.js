@@ -42,13 +42,13 @@ module.exports = {
       kec: {
         type: Sequelize.STRING,
       },
-      puskesmas: {
-        type: Sequelize.STRING,
-      },
-      posyandu: {
-        type: Sequelize.STRING,
-      },
       parentId: {
+        type: Sequelize.INTEGER
+      },
+      posyanduId: {
+        type: Sequelize.INTEGER
+      },
+      puskesmaId: {
         type: Sequelize.INTEGER
       },
       createdAt: {

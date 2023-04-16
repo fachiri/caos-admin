@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
       Toddler.belongsTo(models.Parent, {
         foreignKey: "parentId"
       });
+      Toddler.belongsTo(models.Posyandus, {
+        foreignKey: "posyanduId"
+      });
+      Toddler.belongsTo(models.Puskesmas, {
+        foreignKey: "puskesmaId"
+      });
     }
   }
   Toddler.init(
@@ -83,18 +89,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         validate: {
           notEmpty: { msg: "Kecamatan tidak boleh kosong" },
-        },
-      },
-      puskesmas: {
-        type: DataTypes.STRING,
-        validate: {
-          notEmpty: { msg: "Puskesmas tidak boleh kosong" },
-        },
-      },
-      posyandu: {
-        type: DataTypes.STRING,
-        validate: {
-          notEmpty: { msg: "Posyandu tidak boleh kosong" },
         },
       },
       parentId: DataTypes.INTEGER
