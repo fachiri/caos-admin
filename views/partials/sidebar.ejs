@@ -48,6 +48,7 @@
           </a>
         </li>
 
+        <% if(role != 'admin_puskesmas') { %>
         <li class="sidebar-item has-sub">
           <a class="sidebar-link">
             <i class="bi bi-stack"></i>
@@ -78,6 +79,7 @@
             <% } %>
           </ul>
         </li>
+        <% } %>
 
         <li class="sidebar-title">Menu</li>
 
@@ -111,12 +113,14 @@
           </a>
         </li>
 
+        <% if(role != 'admin_puskesmas') { %>
         <li class="sidebar-item">
           <a href="<%= baseUrl %>/measurement" class="sidebar-link">
             <i class="bi bi-rulers"></i>
             <span>Pengukuran</span>
           </a>
         </li>
+        <% } %>
 
         <li class="sidebar-item has-sub">
           <a class="sidebar-link">
