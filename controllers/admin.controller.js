@@ -122,13 +122,9 @@ module.exports = {
             }
         })
 
-        const data = await model.DatasetData.findAll({
-            attributes: ['name', 'berat_badan', 'tinggi_badan', 'usia', 'label', 'akurasi']
-        });
+        const data = await model.DatasetData.findAll()
 
-        const toddlers = await model.Toddler.findAll({
-            attributes: ['uuid', 'name']
-        });
+        const toddlers = await model.Toddler.findAll()
 
         res.render('./pages/dataPrediction', { result, data, toddlers })
     },
@@ -279,54 +275,44 @@ module.exports = {
         res.redirect('/performance')
     },
     predict: async (req, res) => {
-        const { name, Berat, Tinggi, Usia, JK } = req.body
+        const { uuid, Berat, Tinggi, Usia } = req.body
 
-        const lr = new scikitjs.KNeighborsCla1ssifier(3)
-        const dataset = readFileDataset()
-        const split = 0.3
-        const train = splitData(dataset);
-        let [xTrain, xTest, yTrain, yTest] = scikitjs.trainTestSplit(train.attributes, train.labels, split)
-        
-        await lr.fit(xTrain, yTrain)
-        let result = lr.predict([[+Usia, +Berat, +Tinggi, +JK]])
-        let accuracy = lr.score(xTest, yTest)
-        let proba = lr.predictProba([[+Usia, +Berat, +Tinggi, +JK]])
+        const { id, jk, name } = await model.Toddler.findOne({ where: { uuid: uuid } })
+        let fileDataset = readFileDataset()
 
-        console.log(proba.arraySync())
-        
-        result = `${result}`
-        accuracy = `${accuracy}`
-        proba = `${proba}`
-
-        console.log(result)
-        console.log(accuracy)
-
-        let tmp
-        tmp = result.replace('Tensor\n    ', '')
-        tmp = tmp.replace('[', '')
-        tmp = tmp.replace(']', '')
-        result = tmp
-        accuracy = accuracy.replace('Tensor\n    ', '')
-        tmp = proba.replace('Tensor\n    ', '')
-        tmp = tmp.replace('\n     ', '')
-        tmp = tmp.replace('\n     ', '')
-        tmp = tmp.replace('\n     ', '')
-        tmp = tmp.replace('\n     ', '')
-        tmp = tmp.replace('\n     ', '')
-        proba = tmp.replace('\n     ', '')
-
-        console.log(accuracy)
-        console.log(proba)
-        return
+        // add row to dataset
+        const allMeasure = await model.Measurement.findAll({
+            attributes: ['bb', 'tb', 'current_age', 'predict_result'],
+            include: [{
+                model: model.Toddler,
+                attributes: ['jk'],
+            }]
+        })
+        for (const i of allMeasure) {
+            let jk2
+            if (i.Toddler.jk == 'L') {
+                jk2 = 1
+            } else {
+                jk2 = 0
+            }
+            fileDataset.push({
+                Usia: i.current_age,
+                Berat: i.bb,
+                Tinggi: i.tb,
+                JK: jk2,
+                Label: i.predict_result
+            })
+        }
+        const { predict_result, predict_accuracy, predict_proba_x, predict_proba_y } = await algorithm.prediction(+Berat, +Tinggi, +Usia, jk == 'L' ? 1 : 0, splitData(fileDataset))
 
         await model.DatasetData.create({
             name: name,
             berat_badan: Berat,
             tinggi_badan: Tinggi,
             usia: Usia,
-            label: `${result}`,
-            akurasi: `${accuracy}`,
-            proba: `${proba}`
+            label: predict_result,
+            akurasi: predict_accuracy,
+            proba: `[${predict_proba_x, predict_proba_y}]`
         }).then((result) => {
             req.flash('alert', {heproba: '#28ab55', color: 'success', status: 'Success'})
             req.flash('message', `Prediksi ${result.name} Berhasil!`)

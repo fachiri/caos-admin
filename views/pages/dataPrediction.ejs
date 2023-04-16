@@ -21,9 +21,9 @@
             <form action="predict" method="post" data-parsley-validate>
               <div class="form-group">
                 <label class="form-label">Pilih Balita</label>
-                <select name="name" class="form-select choices">
+                <select name="uuid" class="form-select choices">
                 <% for(toddler of toddlers) { %>
-                  <option value="<%= toddler.name %>"><%= toddler.name %></option>
+                  <option value="<%= toddler.uuid %>"><%= toddler.name %> (<%= toddler.jk %>)</option>
                 <% } %>
                 </select>
               </div>

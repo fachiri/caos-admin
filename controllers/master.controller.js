@@ -108,7 +108,6 @@ module.exports = {
       ],
       raw: true
     });
-    console.log(parents)
     if (puskesmaId) {
       myPuskesmas = await model.Puskesmas.findByPk(puskesmaId)
       myPosyandu = await model.Posyandus.findAll({
