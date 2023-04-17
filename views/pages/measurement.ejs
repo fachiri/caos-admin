@@ -9,7 +9,9 @@
     <h3>Pengukuran</h3>
     <div class="d-block">
       <button class="btnCard btn btn-primary border mx-1 disabled" type="button" data-bs-toggle="collapse" data-bs-target="#tableCard" data-bs-parent="#measurementGroup">Daftar Pengukuran</button>
+      <% if(role != 'admin_puskesmas') { %>
       <button class="btnCard btn btn-light border mx-1" type="button" data-bs-toggle="collapse" data-bs-target="#formCard" data-bs-parent="#measurementGroup">Tambah Data</button>
+      <% } %>
       <button class="btnCard btn btn-light border mx-1" type="button" data-bs-toggle="collapse" data-bs-target="#submitReportCard" data-bs-parent="#measurementGroup">Laporan</button>
     </div>
   </div>
@@ -47,9 +49,11 @@
                         <a href="/measurement/<%= measure.uuid %>" class="btn icon btn-success">
                             <i class="bi bi-info-circle"></i>
                         </a>
+                        <% if(role != 'admin_puskesmas') { %>   
                         <a href="/measurement/edit/<%= measure.uuid %>" class="btn icon btn-info">
                           <i class="bi bi-pencil-square"></i>
                         </a>
+                        <% } %>
                     </td>
                   </tr>              
                 <% } %>
