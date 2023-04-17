@@ -324,7 +324,12 @@ module.exports = {
         res.redirect('/dataprediction')
     },
     growth: async (req, res) => {
-        const data = await model.Toddler.findAll()
+        const data = await model.Toddler.findAll({
+            include: [
+                { model: model.Puskesmas },
+                { model: model.Posyandus }
+            ]
+        })
         res.render('./pages/growth', { data })
     },
     growthDetail: async (req, res) => {
