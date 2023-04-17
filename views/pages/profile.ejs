@@ -109,7 +109,7 @@
                       <td>
                         <% if(data.Users.length > 0) { %>
                           <% data.Users.forEach((users)=> { %>
-                            <p> <%= users.name %> </p>
+                            <p> <%= users.role == 'admin_posyandu' ? users.name : '' %> </p>
                           <% }) %>
                         <% } else { %>
                           <p class="text-warning">Admin tidak ditemukan</p> 
