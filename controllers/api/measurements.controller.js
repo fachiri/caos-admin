@@ -108,7 +108,16 @@ module.exports = {
   storeMeasurement: async (req, res) => {
     try {
       const { uuid, date, age, bb, tb, method, vitamin, lila, lika } = req.body
-      const { id, jk } = await model.Toddler.findOne({ where: { uuid: uuid } })
+      const { id, jk, birth } = await model.Toddler.findOne({ where: { uuid: uuid } })
+
+      const newAge = (algorithm.differenceInMonths(new Date(date), new Date(birth)))
+      if(newAge < 0 || newAge > 60) {
+        return res.status(400).json({
+          status: "Failed",
+          message: `Umur tidak sesuai! (Umur: ${newAge} bulan)`
+        })
+      }
+
       let fileDataset = readFileDataset()
 
       // add row to dataset
@@ -135,18 +144,18 @@ module.exports = {
           })
       }
       const measure = await model.Measurement.findOne({ 
-          where: { ToddlerId: id, current_age: age } 
+          where: { ToddlerId: id, current_age: newAge } 
       })
       if(measure) {
         return res.status(400).json({
           status: "Failed",
-          message: 'Pengukuran telah dilakukan!'
+          message: `Pengukuran pada bulan ke-${newAge} telah dilakukan!`
         });
       }
-      const bbu = algorithm.getZscore('BBU', +age, +bb, +tb, jk)
-      const tbu = algorithm.getZscore('TBU', +age, +bb, +tb, jk)
-      const bbtb = algorithm.getZscore('BBTB', +age, +bb, +tb, jk)
-      const { predict_result, predict_accuracy, predict_proba_x, predict_proba_y } = await algorithm.prediction(+bb, +tb, +age, jk == 'L' ? 1 : 0, splitData(fileDataset))
+      const bbu = algorithm.getZscore('BBU', +newAge, +bb, +tb, jk)
+      const tbu = algorithm.getZscore('TBU', +newAge, +bb, +tb, jk)
+      const bbtb = algorithm.getZscore('BBTB', +newAge, +bb, +tb, jk)
+      const { predict_result, predict_accuracy, predict_proba_x, predict_proba_y } = await algorithm.prediction(+bb, +tb, +newAge, jk == 'L' ? 1 : 0, splitData(fileDataset))
       await model.Measurement.create({
           date, bb, tb,
           bbu: bbu.status,
@@ -159,7 +168,7 @@ module.exports = {
           rekomtbu: tbu.rekom,
           rekombbtb: bbtb.rekom,
           vitamin, lila, lika,
-          current_age: age,
+          current_age: newAge,
           ToddlerId: id,
           predict_result,
           predict_accuracy,

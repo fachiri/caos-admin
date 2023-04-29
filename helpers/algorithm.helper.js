@@ -122,5 +122,10 @@ module.exports = {
         result = getCategoty(type, quotient)
     
         return { zs: quotient, status: result, rekom: obj.Median }
+    },
+    differenceInMonths: (date1, date2) => {
+        const monthDiff = date1.getMonth() - date2.getMonth();
+        const yearDiff = date1.getYear() - date2.getYear();
+        return monthDiff + yearDiff * 12;
     }
 }
