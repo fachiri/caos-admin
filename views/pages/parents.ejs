@@ -113,8 +113,9 @@
               </div>
               <div class="mb-3">
                 <label class="form-label">Password</label>
-                <input type="password" class="form-control" name="password" placeholder="Default (12345678)">
+                <input type="password" class="form-control" name="password" placeholder="Default (12345678)" id="addPassword">
               </div>
+              <div id="addRepeatPassword"></div>
               <button type="submit" class="btn btn-primary ml-1">
                 <i class="bx bx-check d-block d-sm-none"></i>
                 <span class="d-none d-sm-block">Submit</span>
@@ -205,6 +206,17 @@
       .removeClass('btn-light')
       .siblings('.btnCard')
       .removeClass('btn-primary disabled')
+    })
+    $('#addPassword').on('input', (event) => {
+      $('#addRepeatPassword').empty()
+      if(event.target.value.length > 0) {
+        $('#addRepeatPassword').append(
+          `
+            <label class="form-label">Ulangi Password</label>
+            <input type="password" class="form-control mb-3" placeholder="Ulangi Password" data-parsley-required="true"  data-parsley-equalto="#addPassword">
+          `
+        )
+      }
     })
   </script>
 </div>

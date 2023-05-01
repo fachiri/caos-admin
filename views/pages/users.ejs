@@ -75,7 +75,7 @@
         </div>
       </section>
       <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalCenterTitle">
@@ -107,8 +107,9 @@
                 </div>
                 <div class="mb-3">
                   <label class="form-label">Password</label>
-                  <input type="password" class="form-control" placeholder="Default (12345678)" name="password">
+                  <input type="password" class="form-control" placeholder="Default (12345678)" name="password" id="addPassword">
                 </div>
+                <div id="addRepeatPassword"></div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
@@ -159,8 +160,9 @@
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Password</label>
-                    <input type="password" class="form-control" name="password">
+                    <input type="password" class="form-control" name="password" id="editPassword<%= user.uuid %>">
                   </div>
+                  <!-- <div id="editRepeatPassword<%= user.uuid %>"></div> -->
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
@@ -252,4 +254,17 @@
                 </div>
                 <% } %>
                   <%- include('../partials/footer'); %>
+                <script>
+                  $('#addPassword').on('input', (event) => {
+                    $('#addRepeatPassword').empty()
+                    if(event.target.value.length > 0) {
+                      $('#addRepeatPassword').append(
+                        `
+                          <label class="form-label">Ulangi Password</label>
+                          <input type="password" class="form-control mb-3" placeholder="Ulangi Password" data-parsley-required="true"  data-parsley-equalto="#addPassword">
+                        `
+                      )
+                    }
+                  })
+                </script>
     </div>
