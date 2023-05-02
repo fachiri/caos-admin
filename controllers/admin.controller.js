@@ -464,7 +464,8 @@ module.exports = {
         const measure = await model.Measurement.findOne({ 
             where: { ToddlerId: id, current_age: newAge } 
         })
-        if(measure) {
+
+        if(measure && measure.current_age == newAge && measure.uuid != uuid) {
             req.flash('alert', {hex: '#f3616d', color: 'danger', status: 'Failed'})
             req.flash('message', `Pengukuran pada bulan ke-${newAge} telah dilakukan!`)
             return res.redirect(`${baseUrl}/measurement`)
