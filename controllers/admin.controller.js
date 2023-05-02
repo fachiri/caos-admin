@@ -540,5 +540,43 @@ module.exports = {
             req.flash('message', 'Gagal menambahkan data!')
         })
         res.redirect(`${baseUrl}/measurement`)
+    },
+    backupPage: async (req, res) => {
+        res.render('./pages/backup')
+    },
+    export: async (req, res) => {
+        const date = new Date().toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'})
+        const fileName = `Backup_${date.replaceAll(', ', '_').replaceAll('/', '').replaceAll('.', '')}.json`
+
+        const Article = await model.Article.findAll({ raw: true })
+        const Category = await model.Category.findAll({ raw: true })
+        const Dataset = await model.Dataset.findAll({ raw: true })
+        const DatasetData = await model.DatasetData.findAll({ raw: true })
+        const Measurement = await model.Measurement.findAll({ raw: true })
+        const Parent = await model.Parent.findAll({ raw: true })
+        const Posyandus = await model.Posyandus.findAll({ raw: true })
+        const Puskesmas = await model.Puskesmas.findAll({ raw: true })
+        const Toddler = await model.Toddler.findAll({ raw: true })
+        const User = await model.User.findAll({ raw: true })
+
+        const data = {
+            Article,
+            Category,
+            Dataset,
+            DatasetData,
+            Measurement,
+            Parent,
+            Posyandus,
+            Puskesmas,
+            Toddler,
+            User
+        }
+
+        const json = JSON.stringify(data);
+        const mimetype = 'application/json';
+        
+        res.setHeader('Content-Type', mimetype);
+        res.setHeader('Content-disposition','attachment; filename='+fileName);
+        res.send( json );
     }
 }

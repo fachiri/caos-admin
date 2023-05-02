@@ -157,4 +157,7 @@ router.get(
   masterController.parentDelete
 )
 
+router.get("/backup", [verifyUser.isLogin], adminController.backupPage)
+router.get("/export", [], adminController.export)
+
 module.exports = router;
