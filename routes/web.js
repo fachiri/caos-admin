@@ -158,6 +158,6 @@ router.get(
 )
 
 router.get("/backup", [verifyUser.isLogin], adminController.backupPage)
-router.get("/export", [], adminController.export)
+router.get("/export", [verifyUser.isLogin], adminController.export)
 
 module.exports = router;

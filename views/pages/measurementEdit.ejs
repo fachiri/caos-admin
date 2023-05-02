@@ -25,10 +25,6 @@
             <input type="date" class="form-control" name="date" data-parsley-required="true" value="<%= data.date %>">
           </div>
           <div class="mb-3">
-            <label class="form-label">Umur</label>
-            <input type="number" class="form-control" name="age" data-parsley-required="true" value="<%= data.current_age %>">
-          </div>
-          <div class="mb-3">
             <label class="form-label">Berat Badan</label>
             <input type="number" class="form-control" name="bb" data-parsley-required="true" step="0.1" value="<%= data.bb %>">
           </div>
@@ -43,23 +39,6 @@
           <div class="mb-3">
             <label class="form-label">LiKa</label>
             <input type="number" class="form-control" name="lika" data-parsley-required="true" step="0.1" value="<%= data.lika %>">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Cara Ukur Tinggi Badan</label>
-            <div class="form-group mandatory">
-              <div class="form-check me-4">
-                <input class="form-check-input" type="radio" name="method" id="berdiri" value="berdiri" data-parsley-required="true" <%= data.method == 'berdiri' ? 'checked' : '' %>/>
-                <label class="form-check-label" for="berdiri">
-                  Berdiri
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="method" id="telentang" value="telentang" <%= data.method == 'telentang' ? 'checked' : '' %>/>
-                <label class="form-check-label" for="telentang">
-                  Telentang
-                </label>
-              </div>
-            </div>
           </div>
           <div class="mb-3">
             <label class="form-label">Vitamin A ()</label>

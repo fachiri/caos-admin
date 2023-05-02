@@ -427,16 +427,53 @@ module.exports = {
     measurementEdit: async (req, res) => {
         const uuid = req.params.uuid
         const { uuid_toddler, date, age, bb, tb, method, vitamin, lila, lika } = req.body
-        const { jk } = await model.Toddler.findOne({ where: { uuid: uuid_toddler } })
-        if ((age < 24 && method === 'berdiri') || (age > 24 && method === 'telentang')) {
+        const { id, jk, birth } = await model.Toddler.findOne({ where: { uuid: uuid_toddler } })
+
+        const newAge = (algorithm.differenceInMonths(new Date(date), new Date(birth)))
+        if(newAge < 0 || newAge > 60) {
             req.flash('alert', {hex: '#f3616d', color: 'danger', status: 'Failed'})
-            req.flash('message', 'Terjadi kesalahan dalam pengukuran!')
-            return res.redirect(`${baseUrl}/measurement/edit/${uuid}`)
+            req.flash('message', 'Umur tidak sesuai!')
+            return res.redirect(`${baseUrl}/measurement`)
         }
-        const bbu = getZscore('BBU', +age, +bb, +tb, method, jk)
-        const tbu = getZscore('TBU', +age, +bb, +tb, method, jk)
-        const bbtb = getZscore('BBTB', +age, +bb, +tb, method, jk)
-        const { predict_result, predict_accuracy, predict_proba_x, predict_proba_y } = await algorithm.prediction(+bb, +tb, +age, jk == 'L' ? 1 : 0, splitData(readFileDataset()))
+
+        let fileDataset = readFileDataset()
+
+        // add row to dataset
+        const allMeasure = await model.Measurement.findAll({
+            attributes: ['bb', 'tb', 'current_age', 'predict_result'],
+            include: [{
+                model: model.Toddler,
+                attributes: ['jk'],
+            }]
+        })
+        for (const i of allMeasure) {
+            let jk2
+            if (i.Toddler.jk == 'L') {
+                jk2 = 1
+            } else {
+                jk2 = 0
+            }
+            fileDataset.push({
+                Usia: i.current_age,
+                Berat: i.bb,
+                Tinggi: i.tb,
+                JK: jk2,
+                Label: i.predict_result
+            })
+        }
+        const measure = await model.Measurement.findOne({ 
+            where: { ToddlerId: id, current_age: newAge } 
+        })
+        if(measure) {
+            req.flash('alert', {hex: '#f3616d', color: 'danger', status: 'Failed'})
+            req.flash('message', `Pengukuran pada bulan ke-${newAge} telah dilakukan!`)
+            return res.redirect(`${baseUrl}/measurement`)
+        }
+        
+        const bbu = algorithm.getZscore('BBU', +newAge, +bb, +tb, jk)
+        const tbu = algorithm.getZscore('TBU', +newAge, +bb, +tb, jk)
+        const bbtb = algorithm.getZscore('BBTB', +newAge, +bb, +tb, jk)
+        const { predict_result, predict_accuracy, predict_proba_x, predict_proba_y } = await algorithm.prediction(+bb, +tb, +newAge, jk == 'L' ? 1 : 0, splitData(readFileDataset()))
         await model.Measurement.update({
             date, bb, tb,
             bbu: bbu.status,
@@ -448,8 +485,8 @@ module.exports = {
             rekombbu: bbu.rekom,
             rekomtbu: tbu.rekom,
             rekombbtb: bbtb.rekom,
-            method, vitamin, lila, lika,
-            current_age: age,
+            vitamin, lila, lika,
+            current_age: newAge,
             predict_result,
             predict_accuracy,
             predict_proba_x,
