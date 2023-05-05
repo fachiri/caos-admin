@@ -32,10 +32,18 @@
         </div>
       </div>
       <div class="card-body">
-        <a href="import" class="btn btn-success">
-          <i class="bi bi-filetype-json"></i>
-          Import JSON
-        </a>
+        <form action="/import" method="post" enctype="multipart/form-data">
+          <input
+            type="file"
+            class="form-control mb-3"
+            name="data"
+            required
+          />
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-filetype-json"></i>
+            Import JSON
+          </button>
+        </form>
       </div>
     </div>
   </section>

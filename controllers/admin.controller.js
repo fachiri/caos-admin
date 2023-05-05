@@ -1,6 +1,6 @@
 const dirname = `${__dirname}/..`
 const { Op } = require("sequelize")
-const { existsSync, writeFile } = require('fs')
+const { existsSync, writeFile, readFile } = require('fs')
 const xlsx = require('xlsx')
 const datasetConfig = require(`${__dirname}/../config/dataset.json`)
 const datasetPath = `${__dirname}/../config/dataset.json`
@@ -586,16 +586,46 @@ module.exports = {
         const date = new Date().toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'})
         const fileName = `Backup_${date.replaceAll(', ', '_').replaceAll('/', '').replaceAll('.', '')}.json`
 
-        const Article = await model.Article.findAll({ raw: true })
-        const Category = await model.Category.findAll({ raw: true })
-        const Dataset = await model.Dataset.findAll({ raw: true })
-        const DatasetData = await model.DatasetData.findAll({ raw: true })
-        const Measurement = await model.Measurement.findAll({ raw: true })
-        const Parent = await model.Parent.findAll({ raw: true })
-        const Posyandus = await model.Posyandus.findAll({ raw: true })
-        const Puskesmas = await model.Puskesmas.findAll({ raw: true })
-        const Toddler = await model.Toddler.findAll({ raw: true })
-        const User = await model.User.findAll({ raw: true })
+        const Article = await model.Article.findAll({
+            attributes: ['id', 'uuid', 'title', 'slug', 'category', 'image_name', 'url', 'body', 'userId', 'createdAt', 'updatedAt', 'categoryId'], 
+            raw: true 
+        })
+        const Category = await model.Category.findAll({
+            attributes: ['id', 'uuid', 'description', 'createdAt', 'updatedAt'], 
+            raw: true 
+        })
+        const Dataset = await model.Dataset.findAll({
+            attributes: ['id', 'fileName', 'dataTrainingRange', 'createdAt', 'updatedAt'], 
+            raw: true 
+        })
+        const DatasetData = await model.DatasetData.findAll({
+            attributes: ['id', 'uuid', 'name', 'berat_badan', 'tinggi_badan', 'usia', 'label', 'akurasi', 'proba', 'createdAt', 'updatedAt'], 
+            raw: true 
+        })
+        const Measurement = await model.Measurement.findAll({
+            attributes: ['id', 'uuid', 'date', 'bb', 'tb', 'bbu', 'zbbu', 'rekombbu', 'tbu', 'ztbu', 'rekomtbu', 'bbtb', 'zbbtb', 'rekombbtb', 'lila', 'lika', 'method', 'vitamin', 'current_age', 'predict_proba_x', 'predict_proba_y', 'predict_result', 'predict_accuracy', 'editable', 'ToddlerId', 'createdAt', 'updatedAt'], 
+            raw: true 
+        })
+        const Parent = await model.Parent.findAll({
+            attributes: ['id', 'uuid', 'no_kk', 'nik_ayah', 'nama_ayah', 'no_bpjs_ayah', 'nik_ibu', 'nama_ibu', 'no_bpjs_ibu', 'userId', 'createdAt', 'updatedAt'], 
+            raw: true 
+        })
+        const Posyandus = await model.Posyandus.findAll({
+            attributes: ['id', 'uuid', 'nama', 'alamat', 'puskesmaId', 'createdAt', 'updatedAt'], 
+            raw: true 
+        })
+        const Puskesmas = await model.Puskesmas.findAll({
+            attributes: ['id', 'uuid', 'nama', 'alamat', 'createdAt', 'updatedAt'], 
+            raw: true 
+        })
+        const Toddler = await model.Toddler.findAll({
+            attributes: ['id', 'uuid', 'nik', 'no_bpjs', 'name', 'jk', 'birth', 'anak_ke', 'address', 'prov', 'kab', 'kec', 'parentId', 'posyanduId', 'puskesmaId', 'createdAt', 'updatedAt'], 
+            raw: true 
+        })
+        const User = await model.User.findAll({
+            attributes: ['id', 'uuid', 'name', 'email', 'role', 'status', 'password', 'puskesmaId', 'posyanduId', 'createdAt', 'updatedAt'], 
+            raw: true 
+        })
 
         const data = {
             Article,
@@ -616,5 +646,49 @@ module.exports = {
         res.setHeader('Content-Type', mimetype);
         res.setHeader('Content-disposition','attachment; filename='+fileName);
         res.send( json );
+    },
+    import: async (req, res) => {
+        try {
+            const data = req.files.data
+            const newFileName = `${new Date().getTime()}_${data.name}`
+            const newPath = `${process.cwd()}/backup/${newFileName}`
+            await data.mv(newPath, (err) => {
+                if (err) {
+                    console.log(err)
+                    req.flash('alert', {hex: '#f3616d', color: 'danger', status: 'Failed'})
+                    req.flash('message', 'Import Gagal')
+                    return res.redirect(`${baseUrl}/backup`)
+                }
+                readFile(newPath, "utf8", async (err, jsonString) => {
+                    if (err) {
+                        console.log("File read failed:", err);
+                        throw new Error("File read failed:", err)
+                    }
+                    const newData = JSON.parse(jsonString)
+                    // delete data
+                    for (const key in newData) {
+                        await model[key].destroy({ truncate: true })
+                    }
+                    // insert data
+                    for (const key in newData) {
+                        // console.log(`${key}: ${newData[key]}`);
+                        if(newData[key].length > 0) {
+                            for(e of newData[key]) {
+                                await model[key].create(e)
+                            }
+                        }
+                    }
+                });
+            })
+            req.flash('alert', {hex: '#28ab55', color: 'success', status: 'Success'})
+            req.flash('message', 'Import Berhasil')
+            res.redirect(`${baseUrl}/backup`)
+        } catch (err) {
+            console.log(err)
+            req.flash('alert', {hex: '#f3616d', color: 'danger', status: 'Failed'})
+            req.flash('message', 'Import gagal')
+            res.redirect(`${baseUrl}/backup`)
+        }
+        
     }
 }
